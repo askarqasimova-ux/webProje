@@ -663,11 +663,11 @@
 
         function start() {
 
-            fetch('http://localhost:3002/api/dbUrunler')
+            fetch('https://webproje-lf1j.onrender.com/api/dbUrunler')
                 .then(cevap => cevap.json())
                 .then(dbUrunler => {
                     urunler = dbUrunler;
-                    return fetch('http://localhost:3002/api/populer-urun');
+                    return fetch('https://webproje-lf1j.onrender.com/api/populer-urun');
                 })
                 .then(cevap => cevap.json())
                 .then(popular => {
@@ -714,7 +714,7 @@
             let ad = document.getElementById("isim").value;
             let sifre = document.getElementById("passw").value;
 
-            fetch('http://localhost:3002/api/giris', {
+            fetch('https://webproje-lf1j.onrender.com/api/giris', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ad: ad, sifre: sifre })
@@ -758,7 +758,7 @@
 
             }
 
-            fetch('http://localhost:3002/api/kayit', {
+            fetch('https://webproje-lf1j.onrender.com/api/kayit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ad: ad, sifre: sifre1 })
@@ -865,7 +865,7 @@
         function sepeteEkle(i) {
 
             let u = urunler[i];
-            fetch('http://localhost:3002/api/sepet/ekle', {
+            fetch('https://webproje-lf1j.onrender.com/api/sepet/ekle', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
@@ -885,7 +885,7 @@
 
         function dbSepetiGetir() {
             if (!aktifKullanici) return;
-            fetch(`http://localhost:3002/api/sepet/${aktifKullanici}`)
+            fetch(`https://webproje-lf1j.onrender.com/api/sepet/${aktifKullanici}`)
                 .then(cevap => cevap.json())
                 .then(gelenSepet => {
                     sepet = gelenSepet;
@@ -966,7 +966,7 @@
 
         function sepetenSil(silinecekAd, urunId) {
 
-            fetch(`http://localhost:3002/api/sepet/sil/${aktifKullanici}/${urunId}`, {
+            fetch(`https://webproje-lf1j.onrender.com/api/sepet/sil/${aktifKullanici}/${urunId}`, {
                 method: 'DELETE'
             })
                 .then(() => {
@@ -992,7 +992,7 @@
 
             else {
 
-                fetch(`http://localhost:3002/api/sepet/temizle/${aktifKullanici}`, { method: 'DELETE' })
+                fetch(`https://webproje-lf1j.onrender.com/api/sepet/temizle/${aktifKullanici}`, { method: 'DELETE' })
                     .then(() => {
                         document.getElementById("gelisme").style.opacity = "0.3";
                         let ekran = document.getElementsByClassName("odemeEkran")[0];
@@ -1069,7 +1069,7 @@
                 return;
             }
 
-            fetch('http://localhost:3002/api/guncelle', {
+            fetch('https://webproje-lf1j.onrender.com/api/guncelle', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ eskiAd: eskiAd, yeniAd: yeniAd, yeniSifre: yeniSifre })
