@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            position: relative;
+            margin: 0px;
+            padding: 0px;
+            background-color: white;
+        }
+
+        #navbar {
+            position: relative;
+            width: 100;
+            height: 20px;
+            background-color: rgb(0, 0, 0);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 5px solid gold;
+            color: gold;
+        }
+
+        #gelisme {
+            display: block;
+        }
+
+        #giris {
+            position: relative;
+            display: none;
+
+
+            padding: 20px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-align: center;
+
+            border: 7px dotted black;
+
+            width: 300px;
+            height: 300px;
+            background-color: tomato;
+        }
+
+        #buton {
+            position: absolute;
+            bottom: 160px;
+            right: 85px;
+        }
+
+        #yeniuye {
+
+
+            display: none;
+            position: relative;
+
+            padding: 20px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-align: center;
+
+            border: 7px dotted black;
+
+            width: 300px;
+            height: 300px;
+            background-color: tomato;
+
+        }
+
+        #yeni {
+
+            position: absolute;
+            bottom: 160px;
+            right: 193px;
+        }
+
+        .kullaniciIkon {
+
+
+
+
+            width: 30px;
+            border: 3px solid gold;
+            background-color: white;
+            border-radius: 100px;
+            margin: -5px auto;
+
+
+
+
+        }
+
+        .cikis {
+
+            border: 2px solid black;
+            background-color: white;
+            border-radius: 10px;
+            float: right;
+            margin-left: 10px;
+
+        }
+
+        .urunItem {
+
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+            position: relative;
+            background-color: rgb(0, 0, 0);
+            width: 200px;
+            height: 200px;
+            border: 5px solid gold;
+
+            vertical-align: middle;
+            color: white;
+
+        }
+
+        .urunItem:hover {
+
+            box-shadow: 5px 5px 20px black;
+        }
+
+
+
+        .urunImg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px;
+            margin-bottom: 0%;
+        }
+
+
+
+        .urunInfo {
+
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            color: black;
+            background-color: white;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            padding: 10px;
+
+        }
+
+        .urunAd {
+
+            float: left;
+
+        }
+
+        .urunFiyat {
+            float: right;
+        }
+
+        #urunlist {
+
+            display: flex;
+
+
+        }
+
+        .sepetEkle {
+
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: gold;
+            color: black;
+            border: none;
+            padding: 14px;
+            font-family: var(--font-body);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .urunItem:hover .sepetEkle {
+            transform: translateY(0);
+
+        }
+
+        .sepetItem {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            left: 0px;
+            justify-content: space-between;
+            vertical-align: middle;
+        }
+
+
+
+
+        .sepet-alani {
+            padding: 10px;
+
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+
+            top: 0;
+            right: 0;
+
+            width: 300px;
+
+            height: 100vh;
+
+            background-color: white;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+
+            z-index: 1000;
+
+
+
+            transform: translateX(100%);
+
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sepet-alani.aktif {
+            transform: translateX(0);
+
+        }
+
+
+        .sepet-ust-kisim {
+            display: flex;
+            justify-content: space-between;
+            /* Başlığı sola, butonu sağa atar */
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .kapat-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+
+        .arkaplan-karartma {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+
+
+
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+
+        .arkaplan-karartma.aktif {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sepetInfo {
+
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+
+        }
+
+        .button {
+
+            height: 30px;
+            width: auto;
+            background-color: gold;
+            color: black;
+            border-radius: 10px;
+        }
+
+        #sepetlist {
+            padding: 10px;
+        }
+
+        .sepetImg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+
+        .toast-kutusu {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .toast-mesaji {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-family: sans-serif;
+            font-size: 14px;
+            text-align: center;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: toastGiris 0.3s forwards;
+        }
+
+
+        .toast-mesaji.kaybol {
+            animation: toastCikis 0.3s forwards;
+        }
+
+        @keyframes toastGiris {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes toastCikis {
+            to {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+
+        .eklecikar {
+
+            float: right;
+            display: flex;
+
+            justify-content: space-between;
+        }
+
+        .navbarRight {
+
+            display: flex;
+            float: right;
+            height: 25px;
+
+
+        }
+
+
+        .hesap-popup {
+            display: none;
+
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+
+            font-family: sans-serif;
+        }
+
+        .hesap-popup.aktif {
+            display: block;
+        }
+
+        .hesap-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .hesap-form input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .guncelle-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cikis-btn {
+            background-color: tomato;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .popup-kapat {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .urunItem:hover .foto {
+            zoom: 110%;
+        }
+
+        .adet_sayisi {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: gold;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            color: black;
+
+            z-index: 100;
+
+
+
+            border-radius: 100%;
+        }
+
+        .disKapsam {
+            position: relative;
+            overflow: visible;
+            display: flex;
+            vertical-align: middle;
+        }
+
+        td {
+            line-height: 0.90;
+        }
+
+        .odemeEkran {
+
+
+            position: absolute;
+            display: flex;
+            width: 100vh;
+            height: 100vh;
+            z-index: 10000000;
+            text-align: center;
+            font-size: 90px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            color: #4CAF50;
+            align-items: center;
+            visibility: hidden;
+        }
+
+        .popular {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(230, 27, 27);
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            color: rgb(0, 0, 0);
+            border: 3px solid gold;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            line-height: 0.9;
+            z-index: 100;
+            font-size: 14px;
+
+
+
+            border-radius: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="odemeEkran">Ödeme başarıyla Gerçekleşti</div>
+
+    <div id="giris">
+
+        <h1>Giriş Ekranı</h1>
+
+        <table>
+            <tr>
+                <td>Adınız : </td>
+                <td><input id="isim" type="text" placeholder="Kullanıcı adı"></td>
+            </tr>
+            <tr>
+                <td>Şifre : </td>
+                <td><input id="passw" type="password" placeholder="Şifre"></td>
+            </tr>
+        </table>
+
+        <button id="buton" onclick="giris()">Giriş Yap</button>
+        <button id="yeni" onclick="yeni()">Yeni Üye</button>
+
+
+
+
+
+    </div>
+
+    <div id="yeniuye">
+
+        <h1>Yeni Üye</h1>
+
+        <table>
+            <tr>
+                <td style="text-align: left;">Adınız : </td>
+                <td><input id="yenikayit" type="text" placeholder="Kullanıcı adı"></td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Şifre : </td>
+                <td><input id="sifre1" type="password" placeholder="Şifre"></td>
+            </tr>
+
+            <tr>
+                <td style="text-align: left;">Şifre Doğrulama : </td>
+                <td><input id="sifre2" type="password" placeholder="Şifre Tekrarı"></td>
+            </tr>
+
+
+        </table>
+
+        <button id="yenibu" onclick="yenibu()">Kaydol</button>
+    </div>
+
+
+
+
+    <div id="gelisme">
+
+        <nav id="navbar">
+            <h1 style="float: left; height: 25px; margin-top: 0%;">Manzum Ticaret</h1>
+            <div class="navbarRight">
+                <img src="thedigitalartist-user-9801870_640.png" class="kullaniciIkon" onclick="hesap()">
+                <button id="sepetiAcBtn" class="sepet-ac-btn">Sepetim</button>
+                <!-- <button  class="cikis" onclick="geri()">Çıkış Yap</button> -->
+
+            </div>
+
+        </nav>
+
+        <!-- <div>
+            <input id="ad" type="text">
+            <input id="fiyat" type="number">
+            <input id="image" type="file">
+
+            <button onclick="ekle()">Ekle</button>
+        </div> -->
+
+        <div>
+            <h1>ÜRÜNLER</h1>
+            <p id="urunlist"></p>
+        </div>
+
+
+
+        <div id="sepetMenusu" class="sepet-alani">
+            <div class="sepet-ust-kisim">
+                <h3>Sepetim</h3>
+                <button id="sepetiKapatBtn" class="kapat-btn">X</button>
+            </div>
+
+            <div id="sepetlist" class="sepet-icerik">
+                <p id="sepetText">Sepetiniz şu an boş.</p>
+            </div>
+
+            <div class="sepetInfo">
+                <p>Toplam : <span id="toplam">0</span>₺</p>
+                <button class="button" onclick="onayla()">Onayla</button>
+
+            </div>
+
+        </div>
+
+        <div id="sepetArkaplan" class="arkaplan-karartma"></div>
+
+        <div id="toastKutusu" class="toast-kutusu"></div>
+
+        <div id="hesapArkaplan" class="arkaplan-karartma" onclick="hesapKapat()"></div>
+        <div id="hesapPopup" class="hesap-popup">
+            <button class="kapat-btn popup-kapat" onclick="hesapKapat()">X</button>
+            <h2 style="margin-top: 0;">Hesap Bilgileri</h2>
+
+            <div class="hesap-form">
+                <label>Kullanıcı Adı:</label>
+                <input type="text" id="guncelAd" placeholder="Kullanıcı adınızı girin">
+                <input type="password" id="guncelsifre" placeholder="yeni şifrenizi giriniz.">
+                <button class="guncelle-btn" onclick="bilgileriGuncelle()">Bilgileri Kaydet</button>
+            </div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+            <button class="cikis-btn" onclick="cikisYap()">Çıkış Yap</button>
+        </div>
+
+
+    </div>
+    <script>
+
+
+        const sepetiAcBtn = document.getElementById('sepetiAcBtn');
+        const sepetiKapatBtn = document.getElementById('sepetiKapatBtn');
+        const sepetMenusu = document.getElementById('sepetMenusu');
+        const sepetArkaplan = document.getElementById('sepetArkaplan');
+
+        sepetiAcBtn.addEventListener('click', function () {
+            sepetMenusu.classList.add('aktif');
+            sepetArkaplan.classList.add('aktif');
+        });
+
+
+        sepetiKapatBtn.addEventListener('click', function () {
+            sepetMenusu.classList.remove('aktif');
+            sepetArkaplan.classList.remove('aktif');
+        });
+
+
+        sepetArkaplan.addEventListener('click', function () {
+            sepetMenusu.classList.remove('aktif');
+            sepetArkaplan.classList.remove('aktif');
+        });
+
+        let populerUrun = [];
+
+        function start() {
+
+            fetch('http://localhost:3002/api/dbUrunler')
+                .then(cevap => cevap.json())
+                .then(dbUrunler => {
+                    urunler = dbUrunler;
+                    return fetch('http://localhost:3002/api/populer-urun');
+                })
+                .then(cevap => cevap.json())
+                .then(popular => {
+                    populerUrun = popular; 
+                    urunGoster();
+                })
+                .catch(hata => console.error('Veri çekme hatası:', hata));
+        }
+
+        window.onload = function () {
+
+            start();
+
+            if (aktifKullanici) {
+                document.getElementById("giris").style.display = "none";
+                document.getElementById("gelisme").style.display = "block";
+                dbSepetiGetir();
+            }
+        };
+
+
+
+        let urunler = [];
+        let sepet = [];
+        let toplam = 0;
+        let kullanicilar = [];
+        let kayitli = localStorage.getItem("kullanicilar");
+
+        if (kayitli) {
+            kullanicilar = JSON.parse(kayitli);
+        }
+
+
+
+        function geri() {
+
+            document.getElementById("gelisme").style.display = "none";
+            document.getElementById("giris").style.display = "block";
+
+        }
+
+        function giris() {
+
+            let ad = document.getElementById("isim").value;
+            let sifre = document.getElementById("passw").value;
+
+            fetch('http://localhost:3002/api/giris', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ad: ad, sifre: sifre })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.basarili) {
+                        aktifKullanici = ad;
+                        localStorage.setItem("aktifKullanici", ad);
+                        document.getElementById("giris").style.display = "none";
+                        document.getElementById("gelisme").style.display = "block";
+                        dbSepetiGetir();
+                        start();
+                    } else {
+                        alert("Kullanıcı adı veya şifre yanlış!");
+                    }
+                });
+
+
+
+
+
+        }
+
+        function yeni() {
+            document.getElementById("yeniuye").style.display = "block";
+            document.getElementById("giris").style.display = "none"
+        }
+
+        function yenibu() {
+
+            let ad = document.getElementById("yenikayit").value;
+            let sifre1 = document.getElementById("sifre1").value;
+            let sifre2 = document.getElementById("sifre2").value;
+
+            if (sifre1 != sifre2) {
+                alert("şifreler uyuşmuyor.");
+                return;
+
+
+
+            }
+
+            fetch('http://localhost:3002/api/kayit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ad: ad, sifre: sifre1 })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.mesaj == "Kayıt başarılı!") {
+                        alert("Kayıt başarılı! Giriş yapabilirsiniz.");
+                        document.getElementById("yeniuye").style.display = "none";
+                        document.getElementById("giris").style.display = "block";
+                    } else {
+                        alert(data.mesaj);
+                    }
+                });
+
+
+
+        }
+
+        function ekle() {
+            let ad = document.getElementById("ad").value;
+            let fiyat = Number(document.getElementById("fiyat").value);
+            let dosya = document.getElementById("image").files[0];
+            let img = URL.createObjectURL(dosya);
+
+
+            urunler.push({ ad: ad, fiyat: fiyat, image: img });
+            urunGoster();
+        }
+
+        function urunGoster() {
+            let alan = document.getElementById("urunlist");
+            alan.innerHTML = "";
+
+
+
+            for (let i = 0; i < urunler.length; i++) {
+                let u = urunler[i];
+
+
+                let adet = sepet.filter(x => x.ad == u.ad).length;
+
+
+
+
+                alan.innerHTML += `
+
+                <div class="disKapsam">
+
+                    <div class="popular" style="display: ${populerUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
+                    
+                    <div class="adet_sayisi" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
+                    <div class = "urunItem">
+                    
+                        <div class = "urunImg">
+                            <img class="foto" src=${u.image} style="width:auto; height:140px">
+                        </div>
+
+
+                        <div class = "urunInfo">
+
+                            <table width="200px">
+
+                                <tr>
+
+                                <td><div class ="urunAd"> 
+                                ${u.ad}
+                            </div></td>
+                                <td rowspan="2"><div class ="urunFiyat"> 
+                                ${u.fiyat}₺<br> 
+                            </div>
+                            
+                            </td>
+
+
+                                </tr>
+
+                                <tr>
+                                
+                                    <td> <div  style="font-family: Arial, Helvetica, sans-serif; font-style:italic; font-size:12px">${u.info}</div></td>
+                                    
+                                </tr>
+                                
+                                
+                                
+                            </table>
+
+                            
+                            
+                           
+                        </div>
+
+                        
+                        <div >
+                            <button class= "sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                        </div>
+                        
+                    </div>
+                </div>`
+
+            };
+        }
+
+        function sepeteEkle(i) {
+
+            let u = urunler[i];
+            fetch('http://localhost:3002/api/sepet/ekle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
+            })
+                .then(() => {
+
+                    sepet.push(u);
+                    toplam += u.fiyat;
+                    toastGoster(`${u.ad} sepete eklendi!`);
+                    sepetGoster();
+                    start();
+                    urunGoster();
+                });
+
+
+        }
+
+        function dbSepetiGetir() {
+            if (!aktifKullanici) return;
+            fetch(`http://localhost:3002/api/sepet/${aktifKullanici}`)
+                .then(cevap => cevap.json())
+                .then(gelenSepet => {
+                    sepet = gelenSepet;
+
+                    toplam = 0;
+                    sepet.forEach(u => toplam += u.fiyat);
+
+                    sepetGoster();
+                    urunGoster();
+                });
+        }
+
+
+        function sepetGoster() {
+            let alan = document.getElementById("sepetlist");
+
+            let gruplar = {};
+
+
+            if (sepet.length === 0) {
+                alan.innerHTML = "Sepetiniz şu an boş";
+
+            }
+
+            else {
+
+                alan.innerHTML = "";
+                for (let i = 0; i < sepet.length; i++) {
+
+                    let u = sepet[i];
+
+
+                    if (gruplar[u.ad]) {
+
+                        gruplar[u.ad].adet++;
+
+                    }
+
+                    else {
+
+                        gruplar[u.ad] = {
+                            id: u.id,
+                            arrayIndex: urunler.findIndex(x => x.ad === u.ad),
+                            image: u.image,
+                            ad: u.ad,
+                            fiyat: u.fiyat,
+                            adet: 1
+                        };
+                    }
+
+                }
+
+                for (let i in gruplar) {
+                    let urun = gruplar[i];
+
+                    alan.innerHTML += `
+                <div class ="sepetItem">
+            
+                   <img class="sepetImg" src=${urun.image} >  ${urun.ad} X ${urun.adet} - ${urun.fiyat * urun.adet} ₺
+                    <div class="eklecikar">
+                        
+                        <button onclick="sepetenSil('${urun.ad}', ${urun.id})">-</button>
+                        <button onclick="sepeteEkle(${urun.arrayIndex})">+</button>
+                    </div>
+                    
+                </div>`;
+                };
+
+
+            } document.getElementById("toplam").innerHTML = toplam;
+            urunGoster();
+
+        }
+
+
+
+
+
+        function sepetenSil(silinecekAd, urunId) {
+
+            fetch(`http://localhost:3002/api/sepet/sil/${aktifKullanici}/${urunId}`, {
+                method: 'DELETE'
+            })
+                .then(() => {
+                    let index = sepet.findIndex(urun => urun.ad === silinecekAd);
+                    if (index !== -1) {
+                        let silinenUrun = sepet[index];
+                        toplam -= silinenUrun.fiyat;
+                        sepet.splice(index, 1);
+                        sepetGoster();
+                        urunGoster();
+                    }
+                });
+        }
+
+
+
+
+        function onayla() {
+
+            if (sepet.length == 0) {
+                document.getElementById("sepetlist").innerHTML = "Sepetiniz Boş Ödeme Yapılmaz!!"
+            }
+
+            else {
+
+                fetch(`http://localhost:3002/api/sepet/temizle/${aktifKullanici}`, { method: 'DELETE' })
+                    .then(() => {
+                        document.getElementById("gelisme").style.opacity = "0.3";
+                        let ekran = document.getElementsByClassName("odemeEkran")[0];
+                        ekran.style.visibility = "visible";
+
+                        sepet = [];
+                        toplam = 0;
+                        sepetGoster();
+
+
+
+
+
+                        setTimeout(() => {
+                            ekran.style.visibility = "hidden";
+                            document.getElementById("gelisme").style.opacity = "1";
+                            sepetMenusu.classList.remove('aktif');
+                            sepetArkaplan.classList.remove('aktif'); start(); urunGoster();
+                        }, 3000);
+                    });
+            }
+
+
+
+
+        }
+
+        function toastGoster(mesaj) {
+            const toastKutusu = document.getElementById('toastKutusu');
+            const toast = document.createElement('div');
+            toast.classList.add('toast-mesaji');
+            toast.innerHTML = `🛒 ${mesaj}`;
+
+            toastKutusu.appendChild(toast);
+
+
+            setTimeout(() => {
+                toast.classList.add('kaybol');
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 2000);
+        }
+
+
+        const hesapPopup = document.getElementById('hesapPopup');
+        const hesapArkaplan = document.getElementById('hesapArkaplan');
+
+
+        function hesap() {
+
+            let aktifKullanici = localStorage.getItem("aktifKullanici");
+            document.getElementById("guncelAd").value = aktifKullanici || "";
+
+            hesapPopup.classList.add('aktif');
+            hesapArkaplan.classList.add('aktif');
+        }
+
+
+        function hesapKapat() {
+            hesapPopup.classList.remove('aktif');
+            hesapArkaplan.classList.remove('aktif');
+        }
+
+
+        function bilgileriGuncelle() {
+            let eskiAd = localStorage.getItem("aktifKullanici");
+            let yeniAd = document.getElementById("guncelAd").value;
+            let yenisifre = document.getElementById("guncelsifre").value;
+
+            if (yeniAd.trim() === "") {
+                alert("Kullanıcı adı boş bırakılamaz!");
+                return;
+            }
+
+            fetch('http://localhost:3002/api/guncelle', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eskiAd: eskiAd, yeniAd: yeniAd, yeniSifre: yeniSifre })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    aktifKullanici = yeniAd;
+                    localStorage.setItem("aktifKullanici", yeniAd);
+                    toastGoster("Hesap bilgileri SQL'de güncellendi!");
+                    hesapKapat();
+                    dbSepetiGetir();
+                });
+        }
+
+
+
+        function cikisYap() {
+            localStorage.removeItem("aktifKullanici");
+            hesapKapat();
+            geri();
+
+
+        }
+
+
+    </script>
+</body>
+
+</html>
