@@ -6,44 +6,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         body {
             position: relative;
             margin: 0px;
             padding: 0px;
-            background-color: white;
+            background-color: #fff7f0;
+            height: 100%;
+
         }
 
         #navbar {
-            position: relative;
-            width: 100;
-            height: 20px;
-            background-color: rgb(0, 0, 0);
-            padding: 20px;
+            position: fixed;
             display: flex;
+
+            top: 0%;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, #ff2a00, #c40000, #7a0000);
+            border-bottom: 3px solid #ffae00;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            padding: 20px 20px 15px;
             justify-content: space-between;
-            border-bottom: 5px solid gold;
             color: gold;
+            box-sizing: border-box;
+            z-index: 1000;
+            align-items: center;
+        }
+
+        .dropdown-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            color: black;
+
+        }
+
+        #aramaDropdown {
+            display: none;
+            position: fixed;
+            top: 7%;
+            left: 39%;
+
+            width: 40%;
+            background: white;
+            border: 2px solid #ddd;
+            border-top: none;
+            z-index: 9998;
+            max-height: 20%;
+            overflow-y: auto;
+            box-sizing: border-box;
+            font-family: Arial;
         }
 
         #gelisme {
-            display: block;
+            margin-top: 90px;
+            display: none;
+        }
+
+        #sifreUnut {
+
+            position: relative;
+            display: none;
+
+            gap: 50px;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+
+
+
+            margin: 8vh auto;
+
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-align: center;
+
+            border-radius: 15px;
+            width: 60%;
+            height: 60vh;
+            background-color: rgb(255, 255, 255);
+            overflow: hidden;
+
+
+            font-size: clamp(0px, 2vh, 18px);
+
         }
 
         #giris {
             position: relative;
-            display: none;
+            display: flex;
+
+            gap: 50px;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
 
 
-            padding: 20px;
+
+            margin: 8vh auto;
+
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             text-align: center;
 
-            border: 7px dotted black;
+            border-radius: 15px;
+            width: 60%;
+            height: 60vh;
+            background-color: rgb(255, 255, 255);
+            overflow: hidden;
 
-            width: 300px;
-            height: 300px;
-            background-color: tomato;
+
+            font-size: clamp(0px, 2vh, 18px);
+
+
         }
 
         #buton {
@@ -55,18 +137,29 @@
         #yeniuye {
 
 
-            display: none;
             position: relative;
+            display: none;
 
-            padding: 20px;
+            gap: 50px;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+
+
+
+            margin: 8vh auto;
+
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             text-align: center;
 
-            border: 7px dotted black;
+            border-radius: 15px;
+            width: 60%;
+            height: 60vh;
+            background-color: rgb(255, 255, 255);
+            overflow: hidden;
 
-            width: 300px;
-            height: 300px;
-            background-color: tomato;
+
+            font-size: clamp(0px, 2vh, 18px);
 
         }
 
@@ -110,16 +203,34 @@
             display: flex;
             flex-direction: column;
             margin: 10px;
-            position: relative;
-            background-color: rgb(0, 0, 0);
-            width: 200px;
-            height: 200px;
-            border: 5px solid gold;
+            background-color: rgb(255, 255, 255);
+            width: 26.6vh;
+            height: 32vh;
+            border-radius: 10px;
+            box-shadow: 0px 0px 12px #dddbdb;
+
+
 
             vertical-align: middle;
             color: white;
 
         }
+
+
+        .urunPriceLeft {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+
+            border-top: 1px solid #f3f3f3;
+            width: 100%;
+            height: 40%;
+
+        }
+
+
+
+
 
         .urunItem:hover {
 
@@ -129,6 +240,7 @@
 
 
         .urunImg {
+
             display: flex;
             align-items: center;
             justify-content: center;
@@ -138,31 +250,98 @@
 
 
 
-        .urunInfo {
 
+
+        .urunInfo {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             margin-top: auto;
-            color: black;
-            background-color: white;
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+            font-family: 'Poppins', sans-serif;
+            color: #6b7280;
+            line-height: 1.3;
             padding: 10px;
 
+            width: 92%;
+            height: 40%;
         }
+
 
         .urunAd {
 
-            float: left;
+            display: block;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1f2937;
+            letter-spacing: -0.5px;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .urunAciklama {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+            font-style: italic;
+            font-size: 12px;
+            color: #6b7280;
+            width: 100%;
+
+
+
+        }
+
+        .urunAna {
+            display: flex;
+            flex-direction: column;
+            margin-top: auto;
+            background-color: rgb(255, 255, 255);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #6b7280;
+            width: 100%;
+            height: 70%;
+        }
+
+
+
+        .anaFiyat {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Poppins', sans-serif;
+            bottom: 0;
+
 
         }
 
         .urunFiyat {
+            font-weight: 600;
+            letter-spacing: -1px;
+        }
+
+        .ciziliUrunFiyat {
             float: right;
+            color: #818181;
+            font-size: 12px;
+
+
+
+            text-decoration: line-through;
         }
 
         #urunlist {
 
             display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+
 
 
         }
@@ -174,6 +353,7 @@
             left: 0;
             right: 0;
             width: 100%;
+            height: 15%;
             background: gold;
             color: black;
             border: none;
@@ -183,7 +363,7 @@
             font-weight: 600;
             letter-spacing: 3px;
             text-transform: uppercase;
-            transform: translateY(100%);
+            transform: translateY(110%);
             transition: transform 0.3s ease-in-out;
             cursor: pointer;
         }
@@ -201,13 +381,20 @@
             left: 0px;
             justify-content: space-between;
             vertical-align: middle;
+            margin-top: 10px;
+            background-color: white;
+            border-radius: 10px;
+            height: 70px;
+            line-height: 0;
+            padding: 10px 10px 0px 10px;
+            box-shadow: 0px 0px 10px rgb(214, 213, 213);
         }
 
 
 
 
         .sepet-alani {
-            padding: 10px;
+            padding: 0px;
 
             display: flex;
             flex-direction: column;
@@ -220,7 +407,7 @@
 
             height: 100vh;
 
-            background-color: white;
+            background-color: #efefef;
             box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
 
             z-index: 1000;
@@ -241,7 +428,6 @@
         .sepet-ust-kisim {
             display: flex;
             justify-content: space-between;
-            /* Başlığı sola, butonu sağa atar */
             align-items: center;
             padding: 20px;
             border-bottom: 1px solid #ddd;
@@ -280,11 +466,99 @@
 
         .sepetInfo {
 
-            padding: 20px;
+            position: relative;
+            margin: 10px;
+            padding: 0px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: auto;
+            overflow: hidden;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #1f4d05;
+            border-radius: 15px;
+            height: 60px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: white;
+
+
+        }
+
+        .sepetIndirim {
+
+            margin: 0px;
+            gap: 5px;
+            padding: 0px 5px;
+            display: flex;
+            align-items: center;
+
+            font-size: 12px;
+            background-color: #d6fad8;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            height: 35px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+
+        }
+
+        #sepetAlt {
+
+
+            position: fixed;
+            margin: 0px;
+            padding: 0px;
+            display: flex;
+            flex-direction: column;
+
+            justify-content: flex-end;
+
+            bottom: 20px;
+
+            left: auto;
+            right: 0px;
+            text-align: center;
+            align-items: center;
+            vertical-align: middle;
+            height: auto;
+
+            width: 300px;
+
+            box-sizing: border-box;
+            background-color: white;
+
+            z-index: 101;
+
+        }
+
+        .kazanc {
+            background-color: white;
+            border-radius: 5px;
+            width: 60px;
+            border: 1px solid #ddd;
+            color: #007a04;
+            font-size: 12px;
+            height: 25px;
+            display: flex;
+            text-align: center;
+            vertical-align: middle;
+            align-items: center;
+            padding-left: 5px;
+
+
+        }
+
+        .buttonSepet {
+
+            height: 100%;
+            width: 70%;
+            background: linear-gradient(to right, rgb(4, 128, 4), rgb(96, 231, 96));
+            color: rgb(255, 255, 255);
+            border: 0px;
+            font-weight: bolder;
 
         }
 
@@ -462,6 +736,8 @@
             overflow: visible;
             display: flex;
             vertical-align: middle;
+            align-items: center;
+            justify-content: space-evenly;
         }
 
         td {
@@ -506,88 +782,645 @@
 
             border-radius: 100%;
         }
+
+        .detayPopular {
+
+            position: absolute;
+            right: 20px;
+            top: 0px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(230, 27, 27);
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            color: rgb(0, 0, 0);
+            border: 3px solid gold;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            line-height: 0.9;
+            z-index: 100;
+            font-size: 20px;
+
+
+
+            border-radius: 100%;
+        }
+
+        .disKapsamDetay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+
+
+        }
+
+
+
+
+
+        .altDetayInfo {
+            position: fixed;
+            bottom: 0px;
+            box-shadow: #ddd;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            height: 70px;
+            border-top: 1px solid black;
+            align-items: center;
+
+            width: 100%;
+            box-sizing: border-box;
+
+        }
+
+        .detaySepetEkle {
+            background-color: rgb(255, 136, 0);
+            width: 330px;
+            border-radius: 5px;
+            border: 2px solid black;
+            height: 50px;
+
+        }
+
+        .detaySimdiAl {
+
+
+            background-color: #ffffff;
+            border: 2px solid gold;
+            border-radius: 5px;
+            color: rgb(255, 136, 0);
+            width: 130px;
+        }
+
+        .detayRight {
+
+            display: flex;
+            justify-content: space-between;
+            right: 0%;
+            width: 465px;
+
+        }
+
+        .urunDetayFiyat {
+            display: flex;
+            justify-content: space-between;
+            left: 0%;
+            color: #818181;
+
+
+
+            text-decoration: line-through;
+
+        }
+
+        .indirimYuzde {
+            background-color: red;
+            padding: 3px;
+            color: white;
+            border-radius: 5px;
+            width: 55px;
+            display: flex;
+
+        }
+
+        .detayKapsama {
+            display: flex;
+            gap: 675px;
+            left: 7px;
+        }
+
+        .indirimfiyat {
+            color: rgb(214, 17, 17);
+            display: flex;
+            font-size: 20px;
+
+        }
+
+        .toplam {
+            display: flex;
+            padding: 0px;
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bolder;
+
+
+        }
+
+        .fiyatim {
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding-left: 10px;
+            height: 100%;
+        }
+
+        .indirimsiz {
+            font-size: 12px;
+            color: #818181;
+            text-decoration: line-through;
+            margin-bottom: 2px;
+        }
+
+        .kargoUcret {
+            font-size: 9px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #4CAF50;
+        }
+
+        .kargoIndirim {
+            margin: 0px;
+            gap: 5px;
+            padding: 0px 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background-color: #e3f2fd;
+            border-top: 1px solid #ddd;
+            height: 35px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .kargoKutu {
+
+
+            background-color: white;
+            border-radius: 5px;
+            width: 100%;
+            border: 1px solid #ddd;
+            color: #007a04;
+            font-size: 12px;
+            height: 25px;
+            display: flex;
+            text-align: center;
+            vertical-align: middle;
+            align-items: center;
+            padding-left: 5px;
+
+
+        }
+
+        .detaySepetEkleAlan {
+            position: relative;
+            width: 330px;
+            height: 100%;
+
+
+        }
+
+        .detayAdet {
+
+            position: absolute;
+            left: -5px;
+            top: -5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: gold;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            color: black;
+            z-index: 100;
+            border-radius: 100%;
+        }
+
+        .kargo {
+
+            background-color: #007a04;
+            color: white;
+            width: 120px;
+            height: 40px;
+            text-align: center;
+            align-items: center;
+            margin: 10px;
+            padding: 0px 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bolder;
+            font-size: 14px;
+        }
+
+        .kampanya {
+            background-color: #e21616;
+            color: white;
+            width: 120px;
+            height: 40px;
+            text-align: center;
+            align-items: center;
+            margin: 10px;
+            padding: 0px 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bolder;
+            font-size: 14px;
+        }
+
+        .yarinKargoda {
+            background-color: #05abf8;
+            color: white;
+            width: 120px;
+            height: 40px;
+            text-align: center;
+            align-items: center;
+            margin: 10px;
+            padding: 0px 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bolder;
+            font-size: 14px;
+        }
+
+        #navigator {
+            position: fixed;
+            display: flex;
+            top: 55px;
+            width: 100%;
+            z-index: 1000;
+
+        }
+
+        #navigator button {
+            background-color: white;
+            border: 0px;
+
+        }
+
+        #navigator span {
+            padding: 2px 8px;
+            border-radius: 5px;
+
+        }
+
+
+
+        .navbuton {
+            width: 50%;
+
+            height: 25px;
+            background-color: gold;
+            border: 3px solid black;
+
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bolder;
+            font-size: 14px;
+
+        }
+
+        .navbuton:hover {
+            background-color: #ddd;
+
+        }
+
+
+
+        .girisIcerik {
+
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            width: 50%;
+            gap: 4%;
+
+
+
+        }
+
+        .girisIcerik span {
+            margin-top: 5%;
+            color: rgb(255, 51, 0);
+            -webkit-text-stroke: 0.5px #000000;
+            font-size: clamp(24px, 4vw, 36px);
+        }
+
+        .girisIcerik h1 {
+            margin-top: -1%;
+        }
+
+        .girisIcerik button {
+            margin-top: -2%;
+        }
+
+        .girisIcerik p:hover {
+
+            color: #ddd;
+            text-decoration: underline;
+
+        }
+
+
+
+
+
+        .girisIcerik input {
+            font-size: clamp(0px, 2vh, 18px);
+            width: 70%;
+            height: 12%;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            padding-left: 5%;
+        }
+
+
+
+        .girisButon {
+            width: 25%;
+            height: 10%;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bolder;
+            box-sizing: border-box;
+            overflow: hidden;
+            white-space: nowrap;
+            text-align: center;
+            margin-top: 5%;
+
+            font-family: serif;
+            background-color: gold;
+            border: 2px solid rgb(0, 0, 0);
+            color: #000000;
+            font-size: clamp(0px, 2vh, 14px);
+            border-radius: 10px;
+            cursor: pointer;
+
+
+
+        }
+
+        .girKaydolArka {
+            position: absolute;
+            display: flex;
+            right: 2%;
+            flex-direction: column;
+
+
+            width: 50%;
+            height: 100%;
+            vertical-align: middle;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20%;
+            font-size: clamp(12px, 2vh, 18px);
+
+        }
+
+        .girKaydol {
+            background-color: gold;
+            vertical-align: middle;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100px 0 0 100px;
+            font-size: clamp(12px, 2vh, 30px);
+            height: 95%;
+            width: 100%;
+
+        }
+
+        .girKaydol h1 {
+            padding-top: 10%;
+        }
+
+        .girKaydol p {
+            font-family: serif;
+            color: #000000;
+            font-size: clamp(1px, 2vh, 14px);
+        }
+
+        .girKaydol button {
+            margin-top: 10%;
+            gap: 344px;
+            font-family: serif;
+            background-color: gold;
+            border: 2px solid rgb(0, 0, 0);
+            color: #000000;
+            font-size: clamp(1px, 2vh, 14px);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #ara {
+
+            width: 40%;
+            height: 90%;
+
+            z-index: 9999;
+
+            font-size: clamp(0px, 2vh, 18px);
+            border: 4px solid gold;
+            border-radius: 10px;
+            padding-left: 5%;
+        }
+
+        .kuponKod {
+            margin-top: 10px;
+            background-color: white;
+            border-radius: 10px;
+            height: 70px;
+            line-height: 0;
+            padding: 10px 5px 0px 10px;
+            box-shadow: 0px 0px 10px rgb(214, 213, 213);
+
+        }
     </style>
 </head>
 
 <body>
 
+    <nav id="navbar">
+        <h1 style="float: left; height: 25px; margin-top: 0%;">Manzum Ticaret</h1>
+
+        <input id="ara" type="text" placeholder="Ürün Ara" oninput="urunAra(this.value)">
+
+        <div class="navbarRight">
+            <img src="thedigitalartist-user-9801870_640.png" class="kullaniciIkon" onclick="hesap()">
+            <button id="sepetiAcBtn" class="sepet-ac-btn">Sepetim</button>
+
+
+        </div>
+
+
+        </div>
+
+    </nav>
+
+
+
+    <nav id="navigator">
+
+        <button class="navbuton" onclick="urunGoster('tumu')"><span onclick="renkDegistir(this)">Tümü</span></button>
+        <button class="navbuton" onclick="urunGoster('yiyecek')"><span
+                onclick="renkDegistir(this)">Yiyecek</span></button>
+        <button class="navbuton" onclick="urunGoster('içecek')"><span
+                onclick="renkDegistir(this)">İçecek</span></button>
+        <div id="aramaDropdown"></div>
+
+    </nav>
+
     <div class="odemeEkran">Ödeme başarıyla Gerçekleşti</div>
 
     <div id="giris">
 
-        <h1>Giriş Ekranı</h1>
-
-        <table>
-            <tr>
-                <td>Adınız : </td>
-                <td><input id="isim" type="text" placeholder="Kullanıcı adı"></td>
-            </tr>
-            <tr>
-                <td>Şifre : </td>
-                <td><input id="passw" type="password" placeholder="Şifre"></td>
-            </tr>
-        </table>
-
-        <button id="buton" onclick="giris()">Giriş Yap</button>
-        <button id="yeni" onclick="yeni()">Yeni Üye</button>
 
 
+        <div class="girisIcerik">
+
+            <span>Manzum Ticaret</span>
+
+            <h1>Giriş Yap</h1>
+
+            <input id="isim" type="text" placeholder="Kullanıcı adı">
+
+            <input id="passw" type="password" placeholder="Şifre">
+            <p style="margin-top: -1%; cursor: pointer;" onclick="sifreReset()">Şifremi Unuttum</p>
+            <button id="girisYap" class="girisButon" onclick="giris()">Giriş Yap</button>
+        </div>
+
+        <div class="girKaydolArka">
+
+            <div class="girKaydol">
+
+                <h1>Merhaba, Değerli<br>Üye!</h1>
+                <p>Sitenin tüm Özelliklerini kullanmak için<br> kişisel bilgilerinizle kayıt olun</p>
 
 
+                <button id="kaydol" class="girisButon" onclick="yeni()">Kaydol</button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div id="toastKutusu" class="toast-kutusu"></div>
+
+    <div id="sifreUnut">
+
+        <div class="girisIcerik">
+
+            <span>Manzum Ticaret</span>
+
+            <h1>Şifremi Unuttum</h1>
+
+            <input type="text" id="guncelAd" placeholder="Kullanıcı adınızı girin">
+            <input type="password" id="guncelsifre" placeholder="yeni şifrenizi giriniz.">
+            <button class="guncelle-btn" onclick="sifreGuncelle()">Güncelle</button>
+
+
+        </div>
+
+        <div class="girKaydolArka">
+
+            <div class="girKaydol">
+
+                <h1>Hemen<br>Giriş yap!<br>Alışverişe Başla!</h1>
+                <p>100'den Fazla Ürün</p>
+                <p>Kampanyalı ürün Çeşitliliği</p>
+                <p>Popüler ürünler</p>
+
+            </div>
+        </div>
 
     </div>
 
     <div id="yeniuye">
 
-        <h1>Yeni Üye</h1>
+        <div class="girisIcerik">
 
-        <table>
-            <tr>
-                <td style="text-align: left;">Adınız : </td>
-                <td><input id="yenikayit" type="text" placeholder="Kullanıcı adı"></td>
-            </tr>
-            <tr>
-                <td style="text-align: left;">Şifre : </td>
-                <td><input id="sifre1" type="password" placeholder="Şifre"></td>
-            </tr>
+            <span>Manzum Ticaret</span>
 
-            <tr>
-                <td style="text-align: left;">Şifre Doğrulama : </td>
-                <td><input id="sifre2" type="password" placeholder="Şifre Tekrarı"></td>
-            </tr>
+            <h1>Giriş Yap</h1>
+
+            <input id="yenikayit" type="text" placeholder="Kullanıcı adı">
 
 
-        </table>
 
-        <button id="yenibu" onclick="yenibu()">Kaydol</button>
+            <input id="sifre1" type="password" placeholder="Şifre">
+
+
+
+
+            <input id="sifre2" type="password" placeholder="Şifre Tekrarı">
+
+
+
+
+
+            <button id="yenibu" class="girisButon" onclick="yenibu()">Kaydol</button>
+        </div>
+
+        <div class="girKaydolArka">
+
+            <div class="girKaydol">
+
+                <h1>Kayıt Ol<br>Alışverişe Başla!</h1>
+                <p>Sitenin tüm Özelliklerini kullanmak için<br> kişisel bilgilerinizle kayıt olun</p>
+                <p>100'den Fazla Ürün</p>
+                <p>Kampanyalı ürün Çeşitliliği</p>
+
+
+
+            </div>
+        </div>
     </div>
 
 
 
+    <div id="hesapArkaplan" class="arkaplan-karartma" onclick="hesapKapat()"></div>
+    <div id="hesapPopup" class="hesap-popup">
+        <button class="kapat-btn popup-kapat" onclick="hesapKapat()">X</button>
+        <h2 style="margin-top: 0;">Hesap Bilgileri</h2>
+
+        <div class="hesap-form">
+            <label>Kullanıcı Adı:</label>
+            <input type="text" id="guncelAd" placeholder="Kullanıcı adınızı girin">
+            <input type="password" id="guncelsifre" placeholder="yeni şifrenizi giriniz.">
+            <button class="guncelle-btn" onclick="bilgileriGuncelle()">Bilgileri Kaydet</button>
+        </div>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <button class="cikis-btn" onclick="cikisYap()">Çıkış Yap</button>
+    </div>
+
+
+    <div id="kuponPopup" class="hesap-popup">
+        <button class="kapat-btn popup-kapat" onclick="hesapKapat()">X</button>
+        <h2 style="margin-top: 0;">Yeni İndirim Kodu</h2>
+
+        <div class="hesap-form">
+            <label>Kod Ekle</label>
+            <input type="text" id="kuponInput">
+            <button class="guncelle-btn" onclick="kuponUygula()">Uygula</button>
+        </div>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+    </div>
+
 
     <div id="gelisme">
 
-        <nav id="navbar">
-            <h1 style="float: left; height: 25px; margin-top: 0%;">Manzum Ticaret</h1>
-            <div class="navbarRight">
-                <img src="thedigitalartist-user-9801870_640.png" class="kullaniciIkon" onclick="hesap()">
-                <button id="sepetiAcBtn" class="sepet-ac-btn">Sepetim</button>
-                <!-- <button  class="cikis" onclick="geri()">Çıkış Yap</button> -->
 
-            </div>
 
-        </nav>
 
-        <!-- <div>
-            <input id="ad" type="text">
-            <input id="fiyat" type="number">
-            <input id="image" type="file">
-
-            <button onclick="ekle()">Ekle</button>
-        </div> -->
 
         <div>
-            <h1>ÜRÜNLER</h1>
+            <h1 id="text">ÜRÜNLER</h1>
+            <p id="urunlist"></p>
+        </div>
+
+        <div>
+            <h1 id="text"></h1>
+            <p id="urunlist"></p>
+        </div>
+
+        <div>
+            <h1 id="text"></h1>
             <p id="urunlist"></p>
         </div>
 
@@ -603,9 +1436,10 @@
                 <p id="sepetText">Sepetiniz şu an boş.</p>
             </div>
 
-            <div class="sepetInfo">
-                <p>Toplam : <span id="toplam">0</span>₺</p>
-                <button class="button" onclick="onayla()">Onayla</button>
+
+            <div id="sepetAlt">
+
+
 
             </div>
 
@@ -615,26 +1449,17 @@
 
         <div id="toastKutusu" class="toast-kutusu"></div>
 
-        <div id="hesapArkaplan" class="arkaplan-karartma" onclick="hesapKapat()"></div>
-        <div id="hesapPopup" class="hesap-popup">
-            <button class="kapat-btn popup-kapat" onclick="hesapKapat()">X</button>
-            <h2 style="margin-top: 0;">Hesap Bilgileri</h2>
 
-            <div class="hesap-form">
-                <label>Kullanıcı Adı:</label>
-                <input type="text" id="guncelAd" placeholder="Kullanıcı adınızı girin">
-                <input type="password" id="guncelsifre" placeholder="yeni şifrenizi giriniz.">
-                <button class="guncelle-btn" onclick="bilgileriGuncelle()">Bilgileri Kaydet</button>
-            </div>
 
-            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-
-            <button class="cikis-btn" onclick="cikisYap()">Çıkış Yap</button>
+        <div>
+            <h1 id="ad"></h1>
+            <div id="urunDetay"></div>
         </div>
 
 
     </div>
     <script>
+
 
 
         const sepetiAcBtn = document.getElementById('sepetiAcBtn');
@@ -659,33 +1484,73 @@
             sepetArkaplan.classList.remove('aktif');
         });
 
-        let populerUrun = [];
+        let popUrun = [];
+
+        function sepetAc(i) {
+
+            if (sepet[i]) {
+
+                sepetMenusu.classList.add('aktif');
+                sepetArkaplan.classList.add('aktif');
+
+            }
+
+            else {
+                sepeteEkle(i);
+                sepetMenusu.classList.add('aktif');
+                sepetArkaplan.classList.add('aktif');
+            }
+
+
+
+
+        }
+
+
 
         function start() {
-
-            fetch('https://webproje-lf1j.onrender.com/api/dbUrunler')
+            fetch('http://localhost:3002/api/dbUrunler')
                 .then(cevap => cevap.json())
                 .then(dbUrunler => {
                     urunler = dbUrunler;
-                    return fetch('https://webproje-lf1j.onrender.com/api/populer-urun');
+
+                    return fetch('http://localhost:3002/api/populer-urun');
                 })
                 .then(cevap => cevap.json())
                 .then(popular => {
-                    populerUrun = popular; 
-                    urunGoster();
+                    popUrun = popular || [];
+
+
+                    urunGoster('tumu');
                 })
                 .catch(hata => console.error('Veri çekme hatası:', hata));
         }
 
+
+
         window.onload = function () {
 
-            start();
+
 
             if (aktifKullanici) {
                 document.getElementById("giris").style.display = "none";
                 document.getElementById("gelisme").style.display = "block";
+                document.getElementById("navbar").style.display = "flex";
+                document.getElementById("navigator").style.display = "flex";
                 dbSepetiGetir();
             }
+
+            else {
+
+                document.getElementById("navbar").style.display = "none";
+                document.getElementById("navigator").style.display = "none";
+                document.getElementById("giris").style.display = "block";
+                document.getElementById("gelisme").style.display = "none";
+                document.body.style.backgroundColor = "gold";
+            }
+            start();
+
+
         };
 
 
@@ -693,8 +1558,13 @@
         let urunler = [];
         let sepet = [];
         let toplam = 0;
+        let indirimsiz = 200;
+        let kazanc = 0;
+        let kargoluToplam = 0;
         let kullanicilar = [];
         let kayitli = localStorage.getItem("kullanicilar");
+        let aktifKullanici = localStorage.getItem("aktifKullanici") || null;
+        let uygulananKupon = null;
 
         if (kayitli) {
             kullanicilar = JSON.parse(kayitli);
@@ -704,17 +1574,23 @@
 
         function geri() {
 
+            document.getElementById("navbar").style.display = "none";
+            document.getElementById("navigator").style.display = "none";
+
             document.getElementById("gelisme").style.display = "none";
             document.getElementById("giris").style.display = "block";
+            document.body.style.backgroundColor = "gold";
 
         }
 
         function giris() {
 
+
+
             let ad = document.getElementById("isim").value;
             let sifre = document.getElementById("passw").value;
 
-            fetch('https://webproje-lf1j.onrender.com/api/giris', {
+            fetch('http://localhost:3002/api/giris', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ad: ad, sifre: sifre })
@@ -726,12 +1602,17 @@
                         localStorage.setItem("aktifKullanici", ad);
                         document.getElementById("giris").style.display = "none";
                         document.getElementById("gelisme").style.display = "block";
+                        document.getElementById("navbar").style.display = "flex";
+                        document.getElementById("navigator").style.display = "flex";
+                        document.body.style.backgroundColor = "white";
                         dbSepetiGetir();
                         start();
+
                     } else {
                         alert("Kullanıcı adı veya şifre yanlış!");
                     }
                 });
+
 
 
 
@@ -758,7 +1639,9 @@
 
             }
 
-            fetch('https://webproje-lf1j.onrender.com/api/kayit', {
+
+
+            fetch('http://localhost:3002/api/kayit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ad: ad, sifre: sifre1 })
@@ -778,18 +1661,81 @@
 
         }
 
-        function ekle() {
-            let ad = document.getElementById("ad").value;
-            let fiyat = Number(document.getElementById("fiyat").value);
-            let dosya = document.getElementById("image").files[0];
-            let img = URL.createObjectURL(dosya);
+        /*  function ekle() {
+             let ad = document.getElementById("ad").value;
+             let fiyat = Number(document.getElementById("fiyat").value);
+             let dosya = document.getElementById("image").files[0];
+             let img = URL.createObjectURL(dosya);
+ 
+ 
+             urunler.push({ ad: ad, fiyat: fiyat, image: img });
+             urunGoster();
+         } */
 
 
-            urunler.push({ ad: ad, fiyat: fiyat, image: img });
-            urunGoster();
+        function renkDegistir(veri) {
+            let tumSpanlar = document.querySelectorAll("#navigator .navbuton span");
+            tumSpanlar.forEach(span => {
+                span.style.backgroundColor = "white";
+                span.style.color = "black";
+
+            });
+
+
+            veri.style.backgroundColor = "#ffc400";
+            veri.style.color = "black";
+            veri.style.padding = "2px 30px";
+            veri.style.borderRadius = "5px";
         }
 
-        function urunGoster() {
+        function kuponButton() {
+
+            kuponPopup.classList.add('aktif');
+            hesapArkaplan.classList.add('aktif');
+
+            let kuponlar = ["HOSGELDIN200", "MERHABA100", "YUZDE50"];
+
+
+        }
+
+        function kuponUygula() {
+            let kod = document.getElementById("kuponInput").value.trim().toUpperCase();
+
+            if (sepet.length === 0) {
+                alert("Sepetiniz boşken kupon uygulayamazsiniz!");
+                return;
+            }
+
+            if (uygulananKupon) {
+                alert("Zaten bir kupon uyguladınız!");
+                return;
+            }
+
+            if (kod === "HOSGELDIN200") {
+                uygulananKupon = "HOSGELDIN200";
+                toplam -= 200; // 200 TL indirim yap
+
+                // Kazancı ve kargo durumunu yeniden hesapla
+                kazanc = indirimsiz - toplam;
+
+                toastGoster("HOSGELDIN200 kuponu başarıyla uygulandı!");
+                sepetGoster();
+                hesapKapat(); // Popup penceresini kapatır
+            } else {
+                alert("Geçersiz kupon kodu!");
+            }
+        }
+
+
+        function urunGoster(deger) {
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
+
+            document.getElementById("urunlist").style.display = "flex";
+            document.getElementById("text").style.display = "flex";
+
+            document.getElementById("urunDetay").style.display = "none";
             let alan = document.getElementById("urunlist");
             alan.innerHTML = "";
 
@@ -808,30 +1754,278 @@
 
                 <div class="disKapsam">
 
-                    <div class="popular" style="display: ${populerUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
+                    <div class="popular" style="display: ${popUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
                     
                     <div class="adet_sayisi" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
-                    <div class = "urunItem">
+                    <div class = "urunItem" style="display: ${u.kategori == deger || (deger == 'tumu') ? 'flex' : 'none'}">
                     
-                        <div class = "urunImg">
-                            <img class="foto" src=${u.image} style="width:auto; height:140px">
+                        <div class = "urunImg" onclick="urunDetay(${i})">
+                            <img class="foto" src=${u.image} style="width:auto; height:17vh">
                         </div>
 
 
                         <div class = "urunInfo">
 
-                            <table width="200px">
+                            
+
+                               
+                            <div class= "urunAna">
+                            
+                                <div class ="urunAd"> 
+                                    ${u.ad} 
+                                </div>
+
+                                <div class="urunAciklama">
+                                    ${u.info}
+                                </div>
+                            </div>
+
+                                     
+                                
+                            <div class="urunPriceLeft">
+
+                                <div class="anaFiyat">
+                                    <div class ="${u.indirimfiyat == null ? 'urunFiyat' : 'ciziliUrunFiyat'}"> 
+                                    ${u.fiyat}₺</div>
+                                    <div class="urunFiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}; color: ${u.indirimfiyat != null ? 'green' : 'black'}">
+                                    ${u.indirimfiyat}₺</div>
+                                </div>
+                            </div>
+
+                           
+                             
+                           
+                        </div>
+
+                        <div>
+                            <button class= "sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                            </div>
+                       
+                        
+                    </div>
+                </div>`
+
+            };
+        }
+
+        function urunAra(kelime) {
+
+            let detay = document.getElementById("urunDetay");
+            if (detay.style.display == "flex") {
+
+                urunAraDropdown(kelime);
+            }
+
+            else {
+
+                window.scrollTo({ top: 0, behavior: "smooth" });
+
+                let arama = kelime.toLowerCase().trim();
+
+                let alan = document.getElementById("urunlist");
+                alan.innerHTML = "";
+
+                for (let i = 0; i < urunler.length; i++) {
+                    let u = urunler[i];
+
+                    if (u.ad.toLowerCase().includes(arama) || u.info.toLowerCase().includes(arama)) {
+                        let adet = sepet.filter(x => x.ad == u.ad).length;
+
+                        alan.innerHTML += `
+                    <div class="disKapsam">
+                        <div class="popular" style="display: ${popUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
+                        <div class="adet_sayisi" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
+                        <div class="urunItem" style="display: flex;">
+                            <div class="urunImg" onclick="urunDetay(${i})">
+                                <img class="foto" src=${u.image} style="width:auto; height:20vh">
+                            </div>
+                            <div class = "urunInfo">
+
+                            
+
+                               
+                            <div class="urunItemLeft">
+                                <div class ="urunAd"> 
+                                    ${u.ad} 
+                                </div>
+
+                                <div class="urunAciklama" style="font-family: Arial, Helvetica, sans-serif; font-style:italic; font-size:12px">
+                                    ${u.info}</div>
+                            </div>
+
+                                     
+                                
+                            <div class="urunItemRight">
+                                    <div class ="${u.indirimfiyat == null ? 'urunFiyat' : 'ciziliUrunFiyat'}"> 
+                                    ${u.fiyat}₺</div>
+                                <div class="urunFiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}; color: ${u.indirimfiyat != null ? 'green' : 'black'}">
+                                    ${u.indirimfiyat}₺</div>
+                            </div>
+
+                           
+                             
+                           
+                        </div>
+
+                        <div>
+                            <button class= "sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                            </div>
+                        </div>
+                    </div>`;
+                    }
+                }
+
+
+                if (alan.innerHTML === "") {
+                    alan.innerHTML = `<p style="font-family: Arial; padding: 20px; color: black;">Aradığınız ürün bulunamadı.</p>`;
+                }
+
+            }
+
+
+        }
+
+        function urunAraDropdown(kelime) {
+            let aranan = kelime.toLowerCase().trim();
+            let dropdown = document.getElementById("aramaDropdown");
+
+
+            if (aranan === "") {
+                dropdown.innerHTML = "";
+                dropdown.style.display = "none";
+                return;
+            }
+
+            dropdown.innerHTML = "";
+            let eslesmeVarMi = false;
+
+
+            for (let i = 0; i < urunler.length; i++) {
+                let u = urunler[i];
+
+                if (u.ad.toLowerCase().includes(aranan)) {
+                    eslesmeVarMi = true;
+
+
+                    dropdown.innerHTML += `
+                <div class="dropdown-item" onclick="dropdownSecim(${i})" >
+                    <img src="${u.image}" style="width: 25px; height: 25px; object-fit: contain;">
+                    <span>${u.ad}</span>
+                </div>
+            `;
+                }
+            }
+
+
+            if (eslesmeVarMi) {
+                dropdown.style.display = "block";
+            } else {
+                dropdown.innerHTML = `<div style="padding: 8px 10px; color: #818181; font-size: 13px;">Sonuç bulunamadı</div>`;
+                dropdown.style.display = "block";
+            }
+        }
+
+
+        function dropdownSecim(index) {
+            let u = urunler[index];
+
+            document.getElementById("ara").value = u.ad;
+
+            document.getElementById("aramaDropdown").style.display = "none";
+
+
+            urunDetay(index);
+        }
+
+
+        document.addEventListener("click", function (e) {
+            let container = document.querySelector(".search-box-container");
+            if (container && !container.contains(e.target)) {
+                document.getElementById("aramaDropdown").style.display = "none";
+            }
+        });
+
+        function sepeteEkle(i) {
+
+            let u = urunler[i];
+            fetch('http://localhost:3002/api/sepet/ekle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
+            })
+                .then(() => {
+
+                    sepet.push(u);
+                    indirimsiz += u.fiyat;
+                    toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat;
+                    kazanc = indirimsiz - toplam;
+                    kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
+                    toastGoster(`${u.ad} sepete eklendi!`);
+                    
+                    dbSepetiGetir();
+                    sepetGoster();
+
+
+                    urunDetay(i);
+
+                    fetch('http://localhost:3002/api/populer-urun')
+                        .then(res => res.json())
+                        .then(popular => {
+                            popUrun = popular || [];
+
+                        });
+
+                });
+
+
+        }
+
+        function urunDetay(i) {
+
+
+            document.getElementById("urunlist").style.display = "none";
+            document.getElementById("text").style.display = "none";
+            document.getElementById("urunDetay").style.display = "flex";
+
+            let alan = document.getElementById("urunDetay");
+
+
+            let u = urunler[i];
+
+            let adet = sepet.filter(x => x.ad == u.ad).length;
+
+            alan.innerHTML = "";
+
+
+
+            alan.innerHTML += `
+
+                <div class="disKapsamDetay">
+
+                    <div class="detayPopular" style="display: ${popUrun.some(p => p.ad == u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
+                    
+                    <div class ="detayInfoBaloncuk">
+                        <div class ="kargo" style=" display: ${u.fiyat >= 300 ? 'flex' : 'none'}">Kargo Bedava</div>
+                        <div class ="kampanya" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}">Kampanya Fiyat</div>
+                        <div class ="yarinKargoda" style=" display: ${u.kargo != null ? 'flex' : 'none'}">Yarın Kargoda</div>
+                    </div>
+                    <div class = "urunItemDetay" >
+                    
+                        <div class = "urunImg">
+                            <img class="foto" src=${u.image} style="width:auto; height:350px">
+                        </div>
+
+
+                        <div class = "urunInfo">
+
+                            <table width="100%">
 
                                 <tr>
 
                                 <td><div class ="urunAd"> 
                                 ${u.ad}
                             </div></td>
-                                <td rowspan="2"><div class ="urunFiyat"> 
-                                ${u.fiyat}₺<br> 
-                            </div>
-                            
-                            </td>
+                                
 
 
                                 </tr>
@@ -852,49 +2046,107 @@
                         </div>
 
                         
-                        <div >
-                            <button class= "sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                        <div class= "altDetayInfo">
+                            
+                               <table width="105px">
+                                
+                                
+
+                                    <tr >
+
+                                        <td width="0px" rowspan="2" style="vertical-align:top">
+                                           
+                                                <div class ="indirimYuzde" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}"> 
+                                                -${(((u.fiyat - u.indirimfiyat) / u.fiyat) * 100).toFixed(2)}% </div>
+                                        
+                                                </td>
+                                                <td> 
+                                                
+                                                         
+                                        
+                                                <div class =" ${u.indirimfiyat == null ? 'indirimfiyat' : 'urunDetayFiyat'}"> 
+                                                            ${u.fiyat}₺<br> 
+                                                
+                                                </div>
+                                            
+                                        </td>
+
+                                    </tr>        
+                                   
+
+                                    <tr>
+
+                                        <td>
+                                            <div class ="indirimfiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}"> 
+                                                ${u.indirimfiyat}₺<br> 
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    
+                                </table>
+                        
+                                
+                            
+
+                                <div class= "detayRight">
+                             
+                                    
+                                    <button class= "detaySimdiAl" onclick="sepetAc(${i})">Şimdi Al</button>
+                                
+
+                                    <div class= "detaySepetEkleAlan">
+                                        
+                                        <div class="detayAdet" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
+                                        <button class= "detaySepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                                    </div>
+                                    
+                                 
+                                </div>
+
+                            
+                            
                         </div>
                         
                     </div>
                 </div>`
 
-            };
-        }
 
-        function sepeteEkle(i) {
-
-            let u = urunler[i];
-            fetch('https://webproje-lf1j.onrender.com/api/sepet/ekle', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
-            })
-                .then(() => {
-
-                    sepet.push(u);
-                    toplam += u.fiyat;
-                    toastGoster(`${u.ad} sepete eklendi!`);
-                    sepetGoster();
-                    start();
-                    urunGoster();
-                });
 
 
         }
 
         function dbSepetiGetir() {
             if (!aktifKullanici) return;
-            fetch(`https://webproje-lf1j.onrender.com/api/sepet/${aktifKullanici}`)
+            fetch(`http://localhost:3002/api/sepet/${aktifKullanici}`)
                 .then(cevap => cevap.json())
                 .then(gelenSepet => {
                     sepet = gelenSepet;
 
+                    // Fiyatları ve kuponu her defasında sıfırdan hesaplamak için sıfırlıyoruz
+                    indirimsiz = 0;
                     toplam = 0;
-                    sepet.forEach(u => toplam += u.fiyat);
+                    uygulananKupon = null; // Önceki kuponu temizle
+
+                    // Eğer veritabanından gelen sepette atanmış bir kupon varsa global değişkene yaz
+                    if (sepet.length > 0 && sepet[0].kupon) {
+                        uygulananKupon = sepet[0].kupon;
+                    }
+
+                    // Ürünlerin fiyatlarını hesapla
+                    sepet.forEach(u => indirimsiz += u.fiyat);
+                    sepet.forEach(u => toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat);
+
+                    // Eğer veritabanında kayıtlı bir kupon varsa fiyattan düşür
+                    if (uygulananKupon === "HOSGELDIN200") {
+                        toplam -= 200;
+                    }
+
+                    kazanc = indirimsiz - toplam;
+                    kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
 
                     sepetGoster();
-                    urunGoster();
+                    urunGoster('tumu'); // Eğer parametre alıyorsa 'tumu' gönderdik
                 });
         }
 
@@ -955,10 +2207,52 @@
                 };
 
 
-            } document.getElementById("toplam").innerHTML = toplam;
+            }
+
+            alan.innerHTML += `
+                <div class ="kuponKod">
+                    <p>İndirim Kodları</p>
+                    <button onclick="kuponButton()"> + Kod Ekle </button>
+                    
+                    </div>`
+
+            // sepetGoster() fonksiyonunun altındaki ilgili alanın güncellenmesi:
+            document.getElementById("sepetAlt").innerHTML = `
+    <div class="kargoIndirim" style="display: ${sepet.length > 0 ? 'flex' : 'none'}"> 
+        <div class="kargoKutu">
+            <div>${toplam < 300 && sepet.length != 0 ? `${300 - toplam} TL değerinde ürün ekleyin` : `Kargo Bedava`} </div>
+        </div>
+    </div>
+    
+    <div class="kuponGosterge" style="display: ${uygulananKupon ? 'flex' : 'none'}; color: green; font-weight: bold; justify-content: space-between; padding: 5px 10px;">
+        <span>Uygulanan Kupon: ${uygulananKupon}</span>
+        <span>-200 TL</span>
+    </div>
+
+    <div class="sepetIndirim" style="display: ${indirimsiz != toplam ? 'flex' : 'none'}"> 
+        <div class="kazanc">${toplam < 300 ? kazanc : kazanc} TL</div>
+        <div>kazancın var</div>
+    </div>
+
+    <div class="sepetInfo">
+        <div class="fiyatim">
+            <div class="kargoUcret" style="display: ${toplam < 300 && sepet.length != 0 ? 'flex' : 'none'}">+200 TL kargo</div>                      
+            <div class="indirimsiz" style="display: ${indirimsiz != toplam ? 'flex' : 'none'}">${indirimsiz} TL</div>
+            <div class="toplam">${toplam < 300 && sepet.length != 0 ? toplam + 200 : toplam} TL</div>
+        </div>
+        <button class="buttonSepet" onclick="onayla()">Sepeti Onayla</button>
+    </div>
+`;
+
             urunGoster();
 
         }
+
+        const kuponPopup = document.getElementById('kuponPopup');
+
+
+
+
 
 
 
@@ -966,18 +2260,36 @@
 
         function sepetenSil(silinecekAd, urunId) {
 
-            fetch(`https://webproje-lf1j.onrender.com/api/sepet/sil/${aktifKullanici}/${urunId}`, {
+            fetch(`http://localhost:3002/api/sepet/sil/${aktifKullanici}/${urunId}`, {
                 method: 'DELETE'
             })
                 .then(() => {
                     let index = sepet.findIndex(urun => urun.ad === silinecekAd);
                     if (index !== -1) {
                         let silinenUrun = sepet[index];
-                        toplam -= silinenUrun.fiyat;
+                        let eleman = sepet[index].id - 1;
+                        let dusulecekToplam = silinenUrun.indirimfiyat != null ? silinenUrun.indirimfiyat : silinenUrun.fiyat;
+
+                        toplam -= dusulecekToplam;
+                        indirimsiz -= silinenUrun.fiyat;
+                        kazanc = indirimsiz - toplam;
+
+                        if (sepet.length == 0) {
+                            toplam = 0;
+
+                        }
+
+
                         sepet.splice(index, 1);
                         sepetGoster();
-                        urunGoster();
+                        urunDetay(eleman)
                     }
+                });
+            fetch('http://localhost:3002/api/populer-urun')
+                .then(res => res.json())
+                .then(popular => {
+                    popUrun = popular || [];
+                    // Detay ekranındaysa detay yıldızları, listedeyse liste yıldızları anlık güncellenir
                 });
         }
 
@@ -992,15 +2304,40 @@
 
             else {
 
-                fetch(`https://webproje-lf1j.onrender.com/api/sepet/temizle/${aktifKullanici}`, { method: 'DELETE' })
+                let sonEklenenUrunID = sepet[sepet.length - 1].id;
+
+                fetch(`http://localhost:3002/api/sepet/temizle/${aktifKullanici}`, { method: 'DELETE' })
                     .then(() => {
                         document.getElementById("gelisme").style.opacity = "0.3";
                         let ekran = document.getElementsByClassName("odemeEkran")[0];
                         ekran.style.visibility = "visible";
 
+
+
                         sepet = [];
+                        popUrun = [];
                         toplam = 0;
+                        indirimsiz = 200;
                         sepetGoster();
+
+
+
+                        start();
+
+                        let gercekSiraNumarasi = urunler.findIndex(urun => urun.id === sonEklenenUrunID);
+
+
+                        if (gercekSiraNumarasi !== -1) {
+                            urunDetay(gercekSiraNumarasi);
+                        } else {
+                            urunGoster();
+                        }
+
+
+
+
+
+
 
 
 
@@ -1010,7 +2347,7 @@
                             ekran.style.visibility = "hidden";
                             document.getElementById("gelisme").style.opacity = "1";
                             sepetMenusu.classList.remove('aktif');
-                            sepetArkaplan.classList.remove('aktif'); start(); urunGoster();
+                            sepetArkaplan.classList.remove('aktif');
                         }, 3000);
                     });
             }
@@ -1052,9 +2389,50 @@
             hesapArkaplan.classList.add('aktif');
         }
 
+        function sifreReset() {
+
+            document.getElementById("giris").style.display = "none";
+            document.getElementById("sifreUnut").style.display = "block";
+
+
+
+
+
+            let girisEkranindakiIsim = document.getElementById("isim").value;
+
+
+            document.getElementById("guncelAd").value = girisEkranindakiIsim || "";
+        }
+
+        function sifreGuncelle() {
+            let yeniAd = document.getElementById("guncelAd").value;
+            let yeniSifre = document.getElementById("guncelsifre").value;
+
+            if (yeniAd.trim() === "") {
+                alert("Kullanıcı adı boş bırakılamaz!");
+                return;
+            }
+
+            fetch('http://localhost:3002/api/sifreGuncelle', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ yeniAd: yeniAd, yeniSifre: yeniSifre })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    toastGoster("Şifreniz güncellendi!");
+                    document.getElementById("giris").style.display = "block";
+                    document.getElementById("sifreUnut").style.display = "none";
+
+
+
+                });
+        }
+
 
         function hesapKapat() {
             hesapPopup.classList.remove('aktif');
+            kuponPopup.classList.remove('aktif');
             hesapArkaplan.classList.remove('aktif');
         }
 
@@ -1062,14 +2440,14 @@
         function bilgileriGuncelle() {
             let eskiAd = localStorage.getItem("aktifKullanici");
             let yeniAd = document.getElementById("guncelAd").value;
-            let yenisifre = document.getElementById("guncelsifre").value;
+            let yeniSifre = document.getElementById("guncelsifre").value;
 
             if (yeniAd.trim() === "") {
                 alert("Kullanıcı adı boş bırakılamaz!");
                 return;
             }
 
-            fetch('https://webproje-lf1j.onrender.com/api/guncelle', {
+            fetch('http://localhost:3002/api/guncelle', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ eskiAd: eskiAd, yeniAd: yeniAd, yeniSifre: yeniSifre })
