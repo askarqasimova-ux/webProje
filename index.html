@@ -1334,10 +1334,9 @@
                 left: 0 !important;
                 right: 0 !important;
                 width: 100% !important;
-                flex-direction: column !important;
+                flex-direction: row;
                 height: auto !important;
                 padding: 10px !important;
-                gap: 10px !important;
                 box-sizing: border-box !important;
 
             }
@@ -1408,7 +1407,7 @@
             }
 
             .foto {
-                height: 14vh !important;
+             height: 18vh !important;
             }
 
             .urunAd {
@@ -1435,17 +1434,18 @@
 
 
             .altDetayInfo table {
-                width: 100% !important;
+                width: 10% !important;
             }
 
             .detayRight {
+                display: flex;
                 width: 100% !important;
-                justify-content: space-between !important;
-                gap: 10px;
+                justify-content: right;
+                gap: 1px;
             }
 
             .detaySimdiAl {
-                width: 35% !important;
+                width: 25% !important;
                 height: 45px !important;
             }
 
@@ -1470,6 +1470,20 @@
                 height: 60px !important;
                 font-size: 15px !important;
             }
+            #urunDetay{
+                width: 100%;
+                height: 100vh;
+                margin-top: -60px;
+            }
+
+            .urunItemDetay .urunImg {
+                zoom: 180%;
+            }
+
+            .urunItemDetay .urunAd{
+                zoom: 150%;
+            }
+            
         }
     </style>
 
@@ -2116,7 +2130,7 @@
                 </div>
                 <div class="urunItemDetay">
                     <div class="urunImg">
-                        <img class="foto" src="${u.image}" style="width:auto; height:350px">
+                        <img class="foto" src="${u.image}" style="width:auto; height:auto">
                     </div>
                     <div class="urunInfo">
                         <table width="100%">
@@ -2125,7 +2139,7 @@
                         </table>
                     </div>
                     <div class="altDetayInfo">
-                        <table width="105px">
+                        <table width="15px">
                             <tr>
                                 <td width="0px" rowspan="2" style="vertical-align:top">
                                     <div class="indirimYuzde" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}"> 
