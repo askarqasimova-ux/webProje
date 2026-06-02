@@ -4,6 +4,14 @@ const admin = require("firebase-admin");
 
 const app = express();
 
+// HTML ve CSS/Resim gibi statik dosyaları sunucuya tanıtıyoruz
+app.use(express.static(__dirname));
+
+// Birisi ana sayfaya girdiğinde index.html dosyasını gönderiyoruz
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html"); // HTML dosyanın adı neyse onu yaz
+});
+
 app.use(cors());
 app.use(express.json()); // JSON verilerini okuyabilmek için şart
 
