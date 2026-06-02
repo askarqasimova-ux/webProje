@@ -12,7 +12,15 @@ app.use(express.json()); // JSON verilerini okuyabilmek için şart
 // -------------------------------------------------------------
 // TODO: Firebase Console -> Proje Ayarları -> Hizmet Hesapları (Service Accounts)
 // bölümünden "Yeni Özel Anahtar Oluştur" diyerek indirdiğin JSON dosyasını prorene ekle.
-const hizmetHesabi = require("./serviceAccountKey.json"); 
+let hizmetHesabi;
+
+if (process.env.FIREBASE_PRIVATE_KEY_JSON) {
+  // Render üzerinde çalışırken değişken içindeki JSON string'ini objeye çeviriyoruz
+  hizmetHesabi = JSON.parse(process.env.FIREBASE_PRIVATE_KEY_JSON);
+} else {
+  // Lokal bilgisayarınızda test ederken yine eski usul dosyadan okuyabilir
+  hizmetHesabi = require("./serviceAccountKey.json");
+}
 
 admin.initializeApp({
   credential: admin.credential.cert(hizmetHesabi),
