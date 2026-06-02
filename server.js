@@ -224,11 +224,16 @@ app.post("/api/sepet/ekle", async (req, res) => {
 app.delete("/api/sepet/sil/:kullanici/:urunId", async (req, res) => {
   try {
     const temizAd = req.params.kullanici.replace(/[.#$[\]]/g, "_");
-    const urunId = req.params.urunId;
+    const gelenId = req.params.urunId;
 
     const sepetRef = db.ref(`sepet/${temizAd}`);
-    // Eşleşen ürünü bulmak için sorguluyoruz
-    const snapshot = await sepetRef.orderByChild("urunId").equalTo(parseInt(urunId) || urunId).once("value");
+    
+    // Gelen ID'yi hem sayı hem de string haliyle kontrol ederek Firebase'de kesin bulmasını sağlıyoruz
+    let snapshot = await sepetRef.orderByChild("urunId").equalTo(parseInt(gelenId)).once("value");
+    
+    if (!snapshot.exists()) {
+      snapshot = await sepetRef.orderByChild("urunId").equalTo(gelenId.toString()).once("value");
+    }
     
     if (snapshot.exists()) {
       // Sadece ilk eşleşen kaydın key'ini alıp siliyoruz (TOP 1 mantığı)
@@ -239,6 +244,7 @@ app.delete("/api/sepet/sil/:kullanici/:urunId", async (req, res) => {
       res.status(404).json({ mesaj: "Ürün sepetinizde bulunamadı" });
     }
   } catch (hata) {
+    console.error("Silme Hatası:", hata);
     res.status(500).send("Sunucu hatası");
   }
 });
