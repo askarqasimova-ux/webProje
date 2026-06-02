@@ -1784,7 +1784,7 @@
                 })
                 .catch(hata => {
                     console.warn('Backend bağlantı detayı:', hata.message);
-                    // Sunucu uyanmaya çalışıyor olabilir (Render ücretsiz servis uyku modu kontrolü)
+
                     toastGoster("Veriler yüklenirken sunucu uyanıyor olabilir, lütfen bekleyin...");
                 });
         }
@@ -1893,6 +1893,8 @@
         function kuponUygula() {
             let kod = document.getElementById("kuponInput").value.trim().toUpperCase();
 
+
+
             if (sepet.length === 0) {
                 alert("Sepetiniz boşken kupon uygulayamazsınız!");
                 return;
@@ -1905,8 +1907,7 @@
 
             if (kod === "HOSGELDIN200") {
                 uygulananKupon = "HOSGELDIN200";
-                toplam -= 200;
-                kazanc = indirimsiz - toplam;
+                sepeteEkle(0);
 
                 toastGoster("HOSGELDIN200 kuponu başarıyla uygulandı!");
                 sepetGoster();
@@ -1929,6 +1930,10 @@
             for (let i = 0; i < urunler.length; i++) {
                 let u = urunler[i];
                 let adet = sepet.filter(x => x.ad == u.ad).length;
+
+                if (u.ad == "kupon") {
+                    continue
+                }
 
                 alan.innerHTML += `
             <div class="disKapsam">
@@ -2053,13 +2058,26 @@
         });
 
         function sepeteEkle(i) {
+
             let u = urunler[i];
+
+           
             fetch(`${API_URL}/api/sepet/ekle`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
             })
                 .then(() => {
+                    
+                    if(urunler[i].ad == "kupon"){
+                        for(let j= 0; j< sepet.length; j++){
+                            if(sepet[j].ad == "kupon"){
+                                alert("Zaten kupon kullandınız!");
+                                return;
+                            }
+                            
+                        }
+                    }
                     sepet.push(u);
                     indirimsiz += u.fiyat;
                     toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat;
@@ -2144,19 +2162,22 @@
                     sepet = gelenSepet;
                     indirimsiz = 0;
                     toplam = 0;
-                    uygulananKupon = null;
-
-                    if (sepet.length > 0 && sepet[0].kupon) {
-                        uygulananKupon = sepet[0].kupon;
-                    }
-
+                    
                     sepet.forEach(u => indirimsiz += u.fiyat);
                     sepet.forEach(u => toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat);
 
-                    if (uygulananKupon === "HOSGELDIN200") {
-                        toplam -= 200;
-                    }
 
+                   for(let i = 0; i< sepet.length; i++){
+                    if(sepet[i].ad == "kupon"){
+                       uygulananKupon = "HOSGELDIN200";
+                       indirimsiz += 200;
+                    }
+                   }
+
+                    
+
+                  
+                    
                     kazanc = indirimsiz - toplam;
                     kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
 
@@ -2175,6 +2196,12 @@
                 alan.innerHTML = "";
                 for (let i = 0; i < sepet.length; i++) {
                     let u = sepet[i];
+
+                    if(u.ad =="kupon"){
+                        continue;
+                    }
+
+                   
                     if (gruplar[u.ad]) {
                         gruplar[u.ad].adet++;
                     } else {
@@ -2215,8 +2242,8 @@
                 </div>
             </div>
             <div class="kuponGosterge" style="display: ${uygulananKupon ? 'flex' : 'none'}; color: green; font-weight: bold; justify-content: space-between; padding: 5px 10px;">
-                <span>Uygulanan Kupon: ${uygulananKupon}</span>
-                <span>-200 TL</span>
+                <button onclick= " document.querySelector('.kuponGosterge').style.display='none'; sepetenSil('kupon',${0});">-</button><span>Uygulanan Kupon: ${uygulananKupon}</span>
+                
             </div>
             <div class="sepetIndirim" style="display: ${indirimsiz != toplam ? 'flex' : 'none'}"> 
                 <div class="kazanc">${kazanc} TL</div>
@@ -2230,15 +2257,19 @@
                 </div>
                 <button class="buttonSepet" onclick="onayla()">Sepeti Onayla</button>
             </div>`;
+
         }
 
+      
         const kuponPopup = document.getElementById('kuponPopup');
 
         function sepetenSil(silinecekAd, urunId) {
             fetch(`${API_URL}/api/sepet/sil/${aktifKullanici}/${urunId}`, {
                 method: 'DELETE'
             })
-                .then(() => {
+                .then(res => res.json())
+                .then(data => {
+                    // Backend gerçekten sildiyse yerelde de sepeti güncelle
                     let index = sepet.findIndex(urun => urun.ad === silinecekAd);
                     if (index !== -1) {
                         let silinenUrun = sepet[index];
@@ -2249,18 +2280,23 @@
                         indirimsiz -= silinenUrun.fiyat;
                         kazanc = indirimsiz - toplam;
 
-                        if (sepet.length == 1) {
-                            toplam = 0;
-                        }
+                        sepet.splice(index, 1); // Diziden çıkart
 
-                        sepet.splice(index, 1);
+                        if (sepet.length === 0) {
+                            toplam = 0;
+                            indirimsiz = 200;
+                            kazanc = 0;
+                        }
+                        
                         sepetGoster();
+                       
 
                         if (gercekSiraNumarasi !== -1) {
                             urunDetay(gercekSiraNumarasi);
                         }
                     }
-                });
+                })
+                .catch(hata => console.error("Silme esnasında hata oluştu:", Hata));
 
             fetch(`${API_URL}/api/populer-urun`)
                 .then(res => res.json())
