@@ -1458,1022 +1458,689 @@
 
 
     </div>
-    <script>
+   <script>
+    // -------------------------------------------------------------
+    // API BAĞLANTI AYARI (Render'a geçince burayı güncelle!)
+    // -------------------------------------------------------------
+    // Lokal test için: 'http://localhost:3002'
+    // Render canlı ortamı için örn: 'https://olimpiyat.onrender.com'
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:3002'
+        : 'https://KENDI_RENDER_UYGULAMA_ADINIZ.onrender.com'; 
 
+    const sepetiAcBtn = document.getElementById('sepetiAcBtn');
+    const sepetiKapatBtn = document.getElementById('sepetiKapatBtn');
+    const sepetMenusu = document.getElementById('sepetMenusu');
+    const sepetArkaplan = document.getElementById('sepetArkaplan');
 
+    sepetiAcBtn.addEventListener('click', function () {
+        sepetMenusu.classList.add('aktif');
+        sepetArkaplan.classList.add('aktif');
+    });
 
-        const sepetiAcBtn = document.getElementById('sepetiAcBtn');
-        const sepetiKapatBtn = document.getElementById('sepetiKapatBtn');
-        const sepetMenusu = document.getElementById('sepetMenusu');
-        const sepetArkaplan = document.getElementById('sepetArkaplan');
+    sepetiKapatBtn.addEventListener('click', function () {
+        sepetMenusu.classList.remove('aktif');
+        sepetArkaplan.classList.remove('aktif');
+    });
 
-        sepetiAcBtn.addEventListener('click', function () {
+    sepetArkaplan.addEventListener('click', function () {
+        sepetMenusu.classList.remove('aktif');
+        sepetArkaplan.classList.remove('aktif');
+    });
+
+    let popUrun = [];
+    let urunler = [];
+    let sepet = [];
+    let toplam = 0;
+    let indirimsiz = 200;
+    let kazanc = 0;
+    let kargoluToplam = 0;
+    let kullanicilar = [];
+    let kayitli = localStorage.getItem("kullanicilar");
+    let aktifKullanici = localStorage.getItem("aktifKullanici") || null;
+    let uygulananKupon = null;
+
+    if (kayitli) {
+        kullanicilar = JSON.parse(kayitli);
+    }
+
+    function sepetAc(i) {
+        if (sepet[i]) {
             sepetMenusu.classList.add('aktif');
             sepetArkaplan.classList.add('aktif');
-        });
-
-
-        sepetiKapatBtn.addEventListener('click', function () {
-            sepetMenusu.classList.remove('aktif');
-            sepetArkaplan.classList.remove('aktif');
-        });
-
-
-        sepetArkaplan.addEventListener('click', function () {
-            sepetMenusu.classList.remove('aktif');
-            sepetArkaplan.classList.remove('aktif');
-        });
-
-        let popUrun = [];
-
-        function sepetAc(i) {
-
-            if (sepet[i]) {
-
-                sepetMenusu.classList.add('aktif');
-                sepetArkaplan.classList.add('aktif');
-
-            }
-
-            else {
-                sepeteEkle(i);
-                sepetMenusu.classList.add('aktif');
-                sepetArkaplan.classList.add('aktif');
-            }
-
-
-
-
+        } else {
+            sepeteEkle(i);
+            sepetMenusu.classList.add('aktif');
+            sepetArkaplan.classList.add('aktif');
         }
+    }
 
+    function start() {
+        fetch(`${API_URL}/api/dbUrunler`)
+            .then(cevap => cevap.json())
+            .then(dbUrunler => {
+                urunler = dbUrunler;
+                return fetch(`${API_URL}/api/populer-urun`);
+            })
+            .then(cevap => cevap.json())
+            .then(popular => {
+                popUrun = popular || [];
+                urunGoster('tumu');
+            })
+            .catch(hata => console.error('Veri çekme hatası:', hata));
+    }
 
-
-        function start() {
-            fetch('http://localhost:3002/api/dbUrunler')
-                .then(cevap => cevap.json())
-                .then(dbUrunler => {
-                    urunler = dbUrunler;
-
-                    return fetch('http://localhost:3002/api/populer-urun');
-                })
-                .then(cevap => cevap.json())
-                .then(popular => {
-                    popUrun = popular || [];
-
-
-                    urunGoster('tumu');
-                })
-                .catch(hata => console.error('Veri çekme hatası:', hata));
-        }
-
-
-
-        window.onload = function () {
-
-
-
-            if (aktifKullanici) {
-                document.getElementById("giris").style.display = "none";
-                document.getElementById("gelisme").style.display = "block";
-                document.getElementById("navbar").style.display = "flex";
-                document.getElementById("navigator").style.display = "flex";
-                dbSepetiGetir();
-            }
-
-            else {
-
-                document.getElementById("navbar").style.display = "none";
-                document.getElementById("navigator").style.display = "none";
-                document.getElementById("giris").style.display = "block";
-                document.getElementById("gelisme").style.display = "none";
-                document.body.style.backgroundColor = "gold";
-            }
-            start();
-
-
-        };
-
-
-
-        let urunler = [];
-        let sepet = [];
-        let toplam = 0;
-        let indirimsiz = 200;
-        let kazanc = 0;
-        let kargoluToplam = 0;
-        let kullanicilar = [];
-        let kayitli = localStorage.getItem("kullanicilar");
-        let aktifKullanici = localStorage.getItem("aktifKullanici") || null;
-        let uygulananKupon = null;
-
-        if (kayitli) {
-            kullanicilar = JSON.parse(kayitli);
-        }
-
-
-
-        function geri() {
-
+    window.onload = function () {
+        if (aktifKullanici) {
+            document.getElementById("giris").style.display = "none";
+            document.getElementById("gelisme").style.display = "block";
+            document.getElementById("navbar").style.display = "flex";
+            document.getElementById("navigator").style.display = "flex";
+            dbSepetiGetir();
+        } else {
             document.getElementById("navbar").style.display = "none";
             document.getElementById("navigator").style.display = "none";
-
-            document.getElementById("gelisme").style.display = "none";
             document.getElementById("giris").style.display = "block";
+            document.getElementById("gelisme").style.display = "none";
             document.body.style.backgroundColor = "gold";
-
         }
+        start();
+    };
 
-        function giris() {
+    function geri() {
+        document.getElementById("navbar").style.display = "none";
+        document.getElementById("navigator").style.display = "none";
+        document.getElementById("gelisme").style.display = "none";
+        document.getElementById("giris").style.display = "block";
+        document.body.style.backgroundColor = "gold";
+    }
 
+    function giris() {
+        let ad = document.getElementById("isim").value;
+        let sifre = document.getElementById("passw").value;
 
-
-            let ad = document.getElementById("isim").value;
-            let sifre = document.getElementById("passw").value;
-
-            fetch('http://localhost:3002/api/giris', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ad: ad, sifre: sifre })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.basarili) {
-                        aktifKullanici = ad;
-                        localStorage.setItem("aktifKullanici", ad);
-                        document.getElementById("giris").style.display = "none";
-                        document.getElementById("gelisme").style.display = "block";
-                        document.getElementById("navbar").style.display = "flex";
-                        document.getElementById("navigator").style.display = "flex";
-                        document.body.style.backgroundColor = "white";
-                        dbSepetiGetir();
-                        start();
-
-                    } else {
-                        alert("Kullanıcı adı veya şifre yanlış!");
-                    }
-                });
-
-
-
-
-
-
-        }
-
-        function yeni() {
-            document.getElementById("yeniuye").style.display = "block";
-            document.getElementById("giris").style.display = "none"
-        }
-
-        function yenibu() {
-
-            let ad = document.getElementById("yenikayit").value;
-            let sifre1 = document.getElementById("sifre1").value;
-            let sifre2 = document.getElementById("sifre2").value;
-
-            if (sifre1 != sifre2) {
-                alert("şifreler uyuşmuyor.");
-                return;
-
-
-
-            }
-
-
-
-            fetch('http://localhost:3002/api/kayit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ad: ad, sifre: sifre1 })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.mesaj == "Kayıt başarılı!") {
-                        alert("Kayıt başarılı! Giriş yapabilirsiniz.");
-                        document.getElementById("yeniuye").style.display = "none";
-                        document.getElementById("giris").style.display = "block";
-                    } else {
-                        alert(data.mesaj);
-                    }
-                });
-
-
-
-        }
-
-        /*  function ekle() {
-             let ad = document.getElementById("ad").value;
-             let fiyat = Number(document.getElementById("fiyat").value);
-             let dosya = document.getElementById("image").files[0];
-             let img = URL.createObjectURL(dosya);
- 
- 
-             urunler.push({ ad: ad, fiyat: fiyat, image: img });
-             urunGoster();
-         } */
-
-
-        function renkDegistir(veri) {
-            let tumSpanlar = document.querySelectorAll("#navigator .navbuton span");
-            tumSpanlar.forEach(span => {
-                span.style.backgroundColor = "white";
-                span.style.color = "black";
-
+        fetch(`${API_URL}/api/giris`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ad: ad, sifre: sifre })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.basarili) {
+                    aktifKullanici = ad;
+                    localStorage.setItem("aktifKullanici", ad);
+                    document.getElementById("giris").style.display = "none";
+                    document.getElementById("gelisme").style.display = "block";
+                    document.getElementById("navbar").style.display = "flex";
+                    document.getElementById("navigator").style.display = "flex";
+                    document.body.style.backgroundColor = "white";
+                    dbSepetiGetir();
+                    start();
+                } else {
+                    alert("Kullanıcı adı veya şifre yanlış!");
+                }
             });
+    }
 
+    function yeni() {
+        document.getElementById("yeniuye").style.display = "block";
+        document.getElementById("giris").style.display = "none";
+    }
 
-            veri.style.backgroundColor = "#ffc400";
-            veri.style.color = "black";
-            veri.style.padding = "2px 30px";
-            veri.style.borderRadius = "5px";
+    function yenibu() {
+        let ad = document.getElementById("yenikayit").value;
+        let sifre1 = document.getElementById("sifre1").value;
+        let sifre2 = document.getElementById("sifre2").value;
+
+        if (sifre1 != sifre2) {
+            alert("Şifreler uyuşmuyor.");
+            return;
         }
 
-        function kuponButton() {
+        fetch(`${API_URL}/api/kayit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ad: ad, sifre: sifre1 })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.mesaj == "Kayıt başarılı!") {
+                    alert("Kayıt başarılı! Giriş yapabilirsiniz.");
+                    document.getElementById("yeniuye").style.display = "none";
+                    document.getElementById("giris").style.display = "block";
+                } else {
+                    alert(data.mesaj);
+                }
+            });
+    }
 
-            kuponPopup.classList.add('aktif');
-            hesapArkaplan.classList.add('aktif');
+    function renkDegistir(veri) {
+        let tumSpanlar = document.querySelectorAll("#navigator .navbuton span");
+        tumSpanlar.forEach(span => {
+            span.style.backgroundColor = "white";
+            span.style.color = "black";
+        });
 
-            let kuponlar = ["HOSGELDIN200", "MERHABA100", "YUZDE50"];
+        veri.style.backgroundColor = "#ffc400";
+        veri.style.color = "black";
+        veri.style.padding = "2px 30px";
+        veri.style.borderRadius = "5px";
+    }
 
+    function kuponButton() {
+        kuponPopup.classList.add('aktif');
+        hesapArkaplan.classList.add('aktif');
+    }
 
+    function kuponUygula() {
+        let kod = document.getElementById("kuponInput").value.trim().toUpperCase();
+
+        if (sepet.length === 0) {
+            alert("Sepetiniz boşken kupon uygulayamazsınız!");
+            return;
         }
 
-        function kuponUygula() {
-            let kod = document.getElementById("kuponInput").value.trim().toUpperCase();
-
-            if (sepet.length === 0) {
-                alert("Sepetiniz boşken kupon uygulayamazsiniz!");
-                return;
-            }
-
-            if (uygulananKupon) {
-                alert("Zaten bir kupon uyguladınız!");
-                return;
-            }
-
-            if (kod === "HOSGELDIN200") {
-                uygulananKupon = "HOSGELDIN200";
-                toplam -= 200; // 200 TL indirim yap
-
-                // Kazancı ve kargo durumunu yeniden hesapla
-                kazanc = indirimsiz - toplam;
-
-                toastGoster("HOSGELDIN200 kuponu başarıyla uygulandı!");
-                sepetGoster();
-                hesapKapat(); // Popup penceresini kapatır
-            } else {
-                alert("Geçersiz kupon kodu!");
-            }
+        if (uygulananKupon) {
+            alert("Zaten bir kupon uyguladınız!");
+            return;
         }
 
+        if (kod === "HOSGELDIN200") {
+            uygulananKupon = "HOSGELDIN200";
+            toplam -= 200;
+            kazanc = indirimsiz - toplam;
 
-        function urunGoster(deger) {
+            toastGoster("HOSGELDIN200 kuponu başarıyla uygulandı!");
+            sepetGoster();
+            hesapKapat();
+        } else {
+            alert("Geçersiz kupon kodu!");
+        }
+    }
 
+    function urunGoster(deger) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        document.getElementById("urunlist").style.display = "flex";
+        document.getElementById("text").style.display = "flex";
+        document.getElementById("urunDetay").style.display = "none";
+        
+        let alan = document.getElementById("urunlist");
+        alan.innerHTML = "";
+
+        for (let i = 0; i < urunler.length; i++) {
+            let u = urunler[i];
+            let adet = sepet.filter(x => x.ad == u.ad).length;
+
+            alan.innerHTML += `
+            <div class="disKapsam">
+                <div class="popular" style="display: ${popUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
+                <div class="adet_sayisi" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
+                <div class="urunItem" style="display: ${u.kategori == deger || (deger == 'tumu') ? 'flex' : 'none'}">
+                    <div class="urunImg" onclick="urunDetay(${i})">
+                        <img class="foto" src="${u.image}" style="width:auto; height:17vh">
+                    </div>
+                    <div class="urunInfo">
+                        <div class="urunAna">
+                            <div class="urunAd">${u.ad}</div>
+                            <div class="urunAciklama">${u.info || ''}</div>
+                        </div>
+                        <div class="urunPriceLeft">
+                            <div class="anaFiyat">
+                                <div class="${u.indirimfiyat == null ? 'urunFiyat' : 'ciziliUrunFiyat'}">${u.fiyat}₺</div>
+                                <div class="urunFiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}; color: green">${u.indirimfiyat}₺</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+    }
+
+    function urunAra(kelime) {
+        let detay = document.getElementById("urunDetay");
+        if (detay.style.display == "flex") {
+            urunAraDropdown(kelime);
+        } else {
             window.scrollTo({ top: 0, behavior: "smooth" });
-
-
-            document.getElementById("urunlist").style.display = "flex";
-            document.getElementById("text").style.display = "flex";
-
-            document.getElementById("urunDetay").style.display = "none";
+            let arama = kelime.toLowerCase().trim();
             let alan = document.getElementById("urunlist");
             alan.innerHTML = "";
 
-
-
             for (let i = 0; i < urunler.length; i++) {
                 let u = urunler[i];
+                if (u.ad.toLowerCase().includes(arama) || (u.info && u.info.toLowerCase().includes(arama))) {
+                    let adet = sepet.filter(x => x.ad == u.ad).length;
 
-
-                let adet = sepet.filter(x => x.ad == u.ad).length;
-
-
-
-
-                alan.innerHTML += `
-
-                <div class="disKapsam">
-
-                    <div class="popular" style="display: ${popUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
-                    
-                    <div class="adet_sayisi" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
-                    <div class = "urunItem" style="display: ${u.kategori == deger || (deger == 'tumu') ? 'flex' : 'none'}">
-                    
-                        <div class = "urunImg" onclick="urunDetay(${i})">
-                            <img class="foto" src=${u.image} style="width:auto; height:17vh">
-                        </div>
-
-
-                        <div class = "urunInfo">
-
-                            
-
-                               
-                            <div class= "urunAna">
-                            
-                                <div class ="urunAd"> 
-                                    ${u.ad} 
-                                </div>
-
-                                <div class="urunAciklama">
-                                    ${u.info}
-                                </div>
-                            </div>
-
-                                     
-                                
-                            <div class="urunPriceLeft">
-
-                                <div class="anaFiyat">
-                                    <div class ="${u.indirimfiyat == null ? 'urunFiyat' : 'ciziliUrunFiyat'}"> 
-                                    ${u.fiyat}₺</div>
-                                    <div class="urunFiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}; color: ${u.indirimfiyat != null ? 'green' : 'black'}">
-                                    ${u.indirimfiyat}₺</div>
-                                </div>
-                            </div>
-
-                           
-                             
-                           
-                        </div>
-
-                        <div>
-                            <button class= "sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
-                            </div>
-                       
-                        
-                    </div>
-                </div>`
-
-            };
-        }
-
-        function urunAra(kelime) {
-
-            let detay = document.getElementById("urunDetay");
-            if (detay.style.display == "flex") {
-
-                urunAraDropdown(kelime);
-            }
-
-            else {
-
-                window.scrollTo({ top: 0, behavior: "smooth" });
-
-                let arama = kelime.toLowerCase().trim();
-
-                let alan = document.getElementById("urunlist");
-                alan.innerHTML = "";
-
-                for (let i = 0; i < urunler.length; i++) {
-                    let u = urunler[i];
-
-                    if (u.ad.toLowerCase().includes(arama) || u.info.toLowerCase().includes(arama)) {
-                        let adet = sepet.filter(x => x.ad == u.ad).length;
-
-                        alan.innerHTML += `
+                    alan.innerHTML += `
                     <div class="disKapsam">
                         <div class="popular" style="display: ${popUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
                         <div class="adet_sayisi" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
                         <div class="urunItem" style="display: flex;">
                             <div class="urunImg" onclick="urunDetay(${i})">
-                                <img class="foto" src=${u.image} style="width:auto; height:20vh">
+                                <img class="foto" src="${u.image}" style="width:auto; height:20vh">
                             </div>
-                            <div class = "urunInfo">
-
-                            
-
-                               
-                            <div class="urunItemLeft">
-                                <div class ="urunAd"> 
-                                    ${u.ad} 
+                            <div class="urunInfo">
+                                <div class="urunItemLeft">
+                                    <div class="urunAd">${u.ad}</div>
+                                    <div class="urunAciklama" style="font-family: Arial; font-style:italic; font-size:12px">${u.info || ''}</div>
                                 </div>
-
-                                <div class="urunAciklama" style="font-family: Arial, Helvetica, sans-serif; font-style:italic; font-size:12px">
-                                    ${u.info}</div>
+                                <div class="urunItemRight">
+                                    <div class="${u.indirimfiyat == null ? 'urunFiyat' : 'ciziliUrunFiyat'}">${u.fiyat}₺</div>
+                                    <div class="urunFiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}; color: green">${u.indirimfiyat}₺</div>
+                                </div>
                             </div>
-
-                                     
-                                
-                            <div class="urunItemRight">
-                                    <div class ="${u.indirimfiyat == null ? 'urunFiyat' : 'ciziliUrunFiyat'}"> 
-                                    ${u.fiyat}₺</div>
-                                <div class="urunFiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}; color: ${u.indirimfiyat != null ? 'green' : 'black'}">
-                                    ${u.indirimfiyat}₺</div>
-                            </div>
-
-                           
-                             
-                           
-                        </div>
-
-                        <div>
-                            <button class= "sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                            <div>
+                                <button class="sepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
                             </div>
                         </div>
                     </div>`;
-                    }
                 }
-
-
-                if (alan.innerHTML === "") {
-                    alan.innerHTML = `<p style="font-family: Arial; padding: 20px; color: black;">Aradığınız ürün bulunamadı.</p>`;
-                }
-
             }
 
+            if (alan.innerHTML === "") {
+                alan.innerHTML = `<p style="font-family: Arial; padding: 20px; color: black;">Aradığınız ürün bulunamadı.</p>`;
+            }
+        }
+    }
 
+    function urunAraDropdown(kelime) {
+        let aranan = kelime.toLowerCase().trim();
+        let dropdown = document.getElementById("aramaDropdown");
+
+        if (aranan === "") {
+            dropdown.innerHTML = "";
+            dropdown.style.display = "none";
+            return;
         }
 
-        function urunAraDropdown(kelime) {
-            let aranan = kelime.toLowerCase().trim();
-            let dropdown = document.getElementById("aramaDropdown");
+        dropdown.innerHTML = "";
+        let eslesmeVarMi = false;
 
-
-            if (aranan === "") {
-                dropdown.innerHTML = "";
-                dropdown.style.display = "none";
-                return;
-            }
-
-            dropdown.innerHTML = "";
-            let eslesmeVarMi = false;
-
-
-            for (let i = 0; i < urunler.length; i++) {
-                let u = urunler[i];
-
-                if (u.ad.toLowerCase().includes(aranan)) {
-                    eslesmeVarMi = true;
-
-
-                    dropdown.innerHTML += `
+        for (let i = 0; i < urunler.length; i++) {
+            let u = urunler[i];
+            if (u.ad.toLowerCase().includes(aranan)) {
+                eslesmeVarMi = true;
+                dropdown.innerHTML += `
                 <div class="dropdown-item" onclick="dropdownSecim(${i})" >
                     <img src="${u.image}" style="width: 25px; height: 25px; object-fit: contain;">
                     <span>${u.ad}</span>
-                </div>
-            `;
-                }
-            }
-
-
-            if (eslesmeVarMi) {
-                dropdown.style.display = "block";
-            } else {
-                dropdown.innerHTML = `<div style="padding: 8px 10px; color: #818181; font-size: 13px;">Sonuç bulunamadı</div>`;
-                dropdown.style.display = "block";
+                </div>`;
             }
         }
 
+        if (eslesmeVarMi) {
+            dropdown.style.display = "block";
+        } else {
+            dropdown.innerHTML = `<div style="padding: 8px 10px; color: #818181; font-size: 13px;">Sonuç bulunamadı</div>`;
+            dropdown.style.display = "block";
+        }
+    }
 
-        function dropdownSecim(index) {
-            let u = urunler[index];
+    function dropdownSecim(index) {
+        let u = urunler[index];
+        document.getElementById("ara").value = u.ad;
+        document.getElementById("aramaDropdown").style.display = "none";
+        urunDetay(index);
+    }
 
-            document.getElementById("ara").value = u.ad;
-
+    document.addEventListener("click", function (e) {
+        let container = document.querySelector(".search-box-container");
+        if (container && !container.contains(e.target)) {
             document.getElementById("aramaDropdown").style.display = "none";
-
-
-            urunDetay(index);
         }
+    });
 
+    function sepeteEkle(i) {
+        let u = urunler[i];
+        fetch(`${API_URL}/api/sepet/ekle`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
+        })
+            .then(() => {
+                sepet.push(u);
+                indirimsiz += u.fiyat;
+                toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat;
+                kazanc = indirimsiz - toplam;
+                kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
+                toastGoster(`${u.ad} sepete eklendi!`);
+                
+                dbSepetiGetir();
+                sepetGoster();
+                urunDetay(i);
 
-        document.addEventListener("click", function (e) {
-            let container = document.querySelector(".search-box-container");
-            if (container && !container.contains(e.target)) {
-                document.getElementById("aramaDropdown").style.display = "none";
-            }
-        });
+                fetch(`${API_URL}/api/populer-urun`)
+                    .then(res => res.json())
+                    .then(popular => {
+                        popUrun = popular || [];
+                    });
+            });
+    }
 
-        function sepeteEkle(i) {
+    function urunDetay(i) {
+        document.getElementById("urunlist").style.display = "none";
+        document.getElementById("text").style.display = "none";
+        document.getElementById("urunDetay").style.display = "flex";
 
-            let u = urunler[i];
-            fetch('http://localhost:3002/api/sepet/ekle', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
-            })
-                .then(() => {
+        let alan = document.getElementById("urunDetay");
+        let u = urunler[i];
+        let adet = sepet.filter(x => x.ad == u.ad).length;
 
-                    sepet.push(u);
-                    indirimsiz += u.fiyat;
-                    toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat;
-                    kazanc = indirimsiz - toplam;
-                    kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
-                    toastGoster(`${u.ad} sepete eklendi!`);
-                    
-                    dbSepetiGetir();
-                    sepetGoster();
-
-
-                    urunDetay(i);
-
-                    fetch('http://localhost:3002/api/populer-urun')
-                        .then(res => res.json())
-                        .then(popular => {
-                            popUrun = popular || [];
-
-                        });
-
-                });
-
-
-        }
-
-        function urunDetay(i) {
-
-
-            document.getElementById("urunlist").style.display = "none";
-            document.getElementById("text").style.display = "none";
-            document.getElementById("urunDetay").style.display = "flex";
-
-            let alan = document.getElementById("urunDetay");
-
-
-            let u = urunler[i];
-
-            let adet = sepet.filter(x => x.ad == u.ad).length;
-
-            alan.innerHTML = "";
-
-
-
-            alan.innerHTML += `
-
-                <div class="disKapsamDetay">
-
-                    <div class="detayPopular" style="display: ${popUrun.some(p => p.ad == u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
-                    
-                    <div class ="detayInfoBaloncuk">
-                        <div class ="kargo" style=" display: ${u.fiyat >= 300 ? 'flex' : 'none'}">Kargo Bedava</div>
-                        <div class ="kampanya" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}">Kampanya Fiyat</div>
-                        <div class ="yarinKargoda" style=" display: ${u.kargo != null ? 'flex' : 'none'}">Yarın Kargoda</div>
+        alan.innerHTML = `
+            <div class="disKapsamDetay">
+                <div class="detayPopular" style="display: ${popUrun.some(p => p.ad == u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
+                <div class="detayInfoBaloncuk">
+                    <div class="kargo" style=" display: ${u.fiyat >= 300 ? 'flex' : 'none'}">Kargo Bedava</div>
+                    <div class="kampanya" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}">Kampanya Fiyat</div>
+                    <div class="yarinKargoda" style=" display: ${u.kargo != null ? 'flex' : 'none'}">Yarın Kargoda</div>
+                </div>
+                <div class="urunItemDetay">
+                    <div class="urunImg">
+                        <img class="foto" src="${u.image}" style="width:auto; height:350px">
                     </div>
-                    <div class = "urunItemDetay" >
-                    
-                        <div class = "urunImg">
-                            <img class="foto" src=${u.image} style="width:auto; height:350px">
-                        </div>
-
-
-                        <div class = "urunInfo">
-
-                            <table width="100%">
-
-                                <tr>
-
-                                <td><div class ="urunAd"> 
-                                ${u.ad}
-                            </div></td>
-                                
-
-
-                                </tr>
-
-                                <tr>
-                                
-                                    <td> <div  style="font-family: Arial, Helvetica, sans-serif; font-style:italic; font-size:12px">${u.info}</div></td>
-                                    
-                                </tr>
-                                
-                                
-                                
-                            </table>
-
-                            
-                            
-                           
-                        </div>
-
-                        
-                        <div class= "altDetayInfo">
-                            
-                               <table width="105px">
-                                
-                                
-
-                                    <tr >
-
-                                        <td width="0px" rowspan="2" style="vertical-align:top">
-                                           
-                                                <div class ="indirimYuzde" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}"> 
-                                                -${(((u.fiyat - u.indirimfiyat) / u.fiyat) * 100).toFixed(2)}% </div>
-                                        
-                                                </td>
-                                                <td> 
-                                                
-                                                         
-                                        
-                                                <div class =" ${u.indirimfiyat == null ? 'indirimfiyat' : 'urunDetayFiyat'}"> 
-                                                            ${u.fiyat}₺<br> 
-                                                
-                                                </div>
-                                            
-                                        </td>
-
-                                    </tr>        
-                                   
-
-                                    <tr>
-
-                                        <td>
-                                            <div class ="indirimfiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}"> 
-                                                ${u.indirimfiyat}₺<br> 
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    
-                                </table>
-                        
-                                
-                            
-
-                                <div class= "detayRight">
-                             
-                                    
-                                    <button class= "detaySimdiAl" onclick="sepetAc(${i})">Şimdi Al</button>
-                                
-
-                                    <div class= "detaySepetEkleAlan">
-                                        
-                                        <div class="detayAdet" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
-                                        <button class= "detaySepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                    <div class="urunInfo">
+                        <table width="100%">
+                            <tr><td><div class="urunAd">${u.ad}</div></td></tr>
+                            <tr><td><div style="font-family: Arial; font-style:italic; font-size:12px">${u.info || ''}</div></td></tr>
+                        </table>
+                    </div>
+                    <div class="altDetayInfo">
+                        <table width="105px">
+                            <tr>
+                                <td width="0px" rowspan="2" style="vertical-align:top">
+                                    <div class="indirimYuzde" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}"> 
+                                        -${(((u.fiyat - u.indirimfiyat) / u.fiyat) * 100).toFixed(0)}% 
                                     </div>
-                                    
-                                 
-                                </div>
-
-                            
-                            
+                                </td>
+                                <td> 
+                                    <div class="${u.indirimfiyat == null ? 'indirimfiyat' : 'urunDetayFiyat'}">${u.fiyat}₺</div>
+                                </td>
+                            </tr>        
+                            <tr>
+                                <td>
+                                    <div class="indirimfiyat" style="display: ${u.indirimfiyat != null ? 'flex' : 'none'}">${u.indirimfiyat}₺</div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="detayRight">
+                            <button class="detaySimdiAl" onclick="sepetAc(${i})">Şimdi Al</button>
+                            <div class="detaySepetEkleAlan">
+                                <div class="detayAdet" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
+                                <button class="detaySepetEkle" onclick="sepeteEkle(${i})">Sepete Ekle</button>
+                            </div>
                         </div>
-                        
                     </div>
-                </div>`
+                </div>
+            </div>`;
+    }
 
+    function dbSepetiGetir() {
+        if (!aktifKullanici) return;
+        fetch(`${API_URL}/api/sepet/${aktifKullanici}`)
+            .then(cevap => cevap.json())
+            .then(gelenSepet => {
+                sepet = gelenSepet;
+                indirimsiz = 0;
+                toplam = 0;
+                uygulananKupon = null;
 
-
-
-        }
-
-        function dbSepetiGetir() {
-            if (!aktifKullanici) return;
-            fetch(`http://localhost:3002/api/sepet/${aktifKullanici}`)
-                .then(cevap => cevap.json())
-                .then(gelenSepet => {
-                    sepet = gelenSepet;
-
-                    // Fiyatları ve kuponu her defasında sıfırdan hesaplamak için sıfırlıyoruz
-                    indirimsiz = 0;
-                    toplam = 0;
-                    uygulananKupon = null; // Önceki kuponu temizle
-
-                    // Eğer veritabanından gelen sepette atanmış bir kupon varsa global değişkene yaz
-                    if (sepet.length > 0 && sepet[0].kupon) {
-                        uygulananKupon = sepet[0].kupon;
-                    }
-
-                    // Ürünlerin fiyatlarını hesapla
-                    sepet.forEach(u => indirimsiz += u.fiyat);
-                    sepet.forEach(u => toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat);
-
-                    // Eğer veritabanında kayıtlı bir kupon varsa fiyattan düşür
-                    if (uygulananKupon === "HOSGELDIN200") {
-                        toplam -= 200;
-                    }
-
-                    kazanc = indirimsiz - toplam;
-                    kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
-
-                    sepetGoster();
-                    urunGoster('tumu'); // Eğer parametre alıyorsa 'tumu' gönderdik
-                });
-        }
-
-
-        function sepetGoster() {
-            let alan = document.getElementById("sepetlist");
-
-            let gruplar = {};
-
-
-            if (sepet.length === 0) {
-                alan.innerHTML = "Sepetiniz şu an boş";
-
-            }
-
-            else {
-
-                alan.innerHTML = "";
-                for (let i = 0; i < sepet.length; i++) {
-
-                    let u = sepet[i];
-
-
-                    if (gruplar[u.ad]) {
-
-                        gruplar[u.ad].adet++;
-
-                    }
-
-                    else {
-
-                        gruplar[u.ad] = {
-                            id: u.id,
-                            arrayIndex: urunler.findIndex(x => x.ad === u.ad),
-                            image: u.image,
-                            ad: u.ad,
-                            fiyat: u.fiyat,
-                            adet: 1
-                        };
-                    }
-
+                if (sepet.length > 0 && sepet[0].kupon) {
+                    uygulananKupon = sepet[0].kupon;
                 }
 
-                for (let i in gruplar) {
-                    let urun = gruplar[i];
+                sepet.forEach(u => indirimsiz += u.fiyat);
+                sepet.forEach(u => toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat);
 
-                    alan.innerHTML += `
-                <div class ="sepetItem">
-            
-                   <img class="sepetImg" src=${urun.image} >  ${urun.ad} X ${urun.adet} - ${urun.fiyat * urun.adet} ₺
+                if (uygulananKupon === "HOSGELDIN200") {
+                    toplam -= 200;
+                }
+
+                kazanc = indirimsiz - toplam;
+                kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
+
+                sepetGoster();
+                urunGoster('tumu'); 
+            });
+    }
+
+    function sepetGoster() {
+        let alan = document.getElementById("sepetlist");
+        let gruplar = {};
+
+        if (sepet.length === 0) {
+            alan.innerHTML = "Sepetiniz şu an boş";
+        } else {
+            alan.innerHTML = "";
+            for (let i = 0; i < sepet.length; i++) {
+                let u = sepet[i];
+                if (gruplar[u.ad]) {
+                    gruplar[u.ad].adet++;
+                } else {
+                    gruplar[u.ad] = {
+                        id: u.id,
+                        arrayIndex: urunler.findIndex(x => x.ad === u.ad),
+                        image: u.image,
+                        ad: u.ad,
+                        fiyat: u.indirimfiyat != null ? u.indirimfiyat : u.fiyat,
+                        adet: 1
+                    };
+                }
+            }
+
+            for (let i in gruplar) {
+                let urun = gruplar[i];
+                alan.innerHTML += `
+                <div class="sepetItem">
+                   <img class="sepetImg" src="${urun.image}" > ${urun.ad} X ${urun.adet} - ${urun.fiyat * urun.adet} ₺
                     <div class="eklecikar">
-                        
-                        <button onclick="sepetenSil('${urun.ad}', ${urun.id})">-</button>
+                        <button onclick="sepetenSil('${urun.ad}', '${urun.id}')">-</button>
                         <button onclick="sepeteEkle(${urun.arrayIndex})">+</button>
                     </div>
-                    
                 </div>`;
-                };
-
-
             }
-
-            alan.innerHTML += `
-                <div class ="kuponKod">
-                    <p>İndirim Kodları</p>
-                    <button onclick="kuponButton()"> + Kod Ekle </button>
-                    
-                    </div>`
-
-            // sepetGoster() fonksiyonunun altındaki ilgili alanın güncellenmesi:
-            document.getElementById("sepetAlt").innerHTML = `
-    <div class="kargoIndirim" style="display: ${sepet.length > 0 ? 'flex' : 'none'}"> 
-        <div class="kargoKutu">
-            <div>${toplam < 300 && sepet.length != 0 ? `${300 - toplam} TL değerinde ürün ekleyin` : `Kargo Bedava`} </div>
-        </div>
-    </div>
-    
-    <div class="kuponGosterge" style="display: ${uygulananKupon ? 'flex' : 'none'}; color: green; font-weight: bold; justify-content: space-between; padding: 5px 10px;">
-        <span>Uygulanan Kupon: ${uygulananKupon}</span>
-        <span>-200 TL</span>
-    </div>
-
-    <div class="sepetIndirim" style="display: ${indirimsiz != toplam ? 'flex' : 'none'}"> 
-        <div class="kazanc">${toplam < 300 ? kazanc : kazanc} TL</div>
-        <div>kazancın var</div>
-    </div>
-
-    <div class="sepetInfo">
-        <div class="fiyatim">
-            <div class="kargoUcret" style="display: ${toplam < 300 && sepet.length != 0 ? 'flex' : 'none'}">+200 TL kargo</div>                      
-            <div class="indirimsiz" style="display: ${indirimsiz != toplam ? 'flex' : 'none'}">${indirimsiz} TL</div>
-            <div class="toplam">${toplam < 300 && sepet.length != 0 ? toplam + 200 : toplam} TL</div>
-        </div>
-        <button class="buttonSepet" onclick="onayla()">Sepeti Onayla</button>
-    </div>
-`;
-
-            urunGoster();
-
         }
 
-        const kuponPopup = document.getElementById('kuponPopup');
+        alan.innerHTML += `
+            <div class="kuponKod">
+                <p>İndirim Kodları</p>
+                <button onclick="kuponButton()"> + Kod Ekle </button>
+            </div>`;
 
+        document.getElementById("sepetAlt").innerHTML = `
+            <div class="kargoIndirim" style="display: ${sepet.length > 0 ? 'flex' : 'none'}"> 
+                <div class="kargoKutu">
+                    <div>${toplam < 300 && sepet.length != 0 ? `${300 - toplam} TL değerinde ürün ekleyin` : `Kargo Bedava`} </div>
+                </div>
+            </div>
+            <div class="kuponGosterge" style="display: ${uygulananKupon ? 'flex' : 'none'}; color: green; font-weight: bold; justify-content: space-between; padding: 5px 10px;">
+                <span>Uygulanan Kupon: ${uygulananKupon}</span>
+                <span>-200 TL</span>
+            </div>
+            <div class="sepetIndirim" style="display: ${indirimsiz != toplam ? 'flex' : 'none'}"> 
+                <div class="kazanc">${kazanc} TL</div>
+                <div>kazancın var</div>
+            </div>
+            <div class="sepetInfo">
+                <div class="fiyatim">
+                    <div class="kargoUcret" style="display: ${toplam < 300 && sepet.length != 0 ? 'flex' : 'none'}">+200 TL kargo</div>                      
+                    <div class="indirimsiz" style="display: ${indirimsiz != toplam ? 'flex' : 'none'}">${indirimsiz} TL</div>
+                    <div class="toplam">${toplam < 300 && sepet.length != 0 ? toplam + 200 : toplam} TL</div>
+                </div>
+                <button class="buttonSepet" onclick="onayla()">Sepeti Onayla</button>
+            </div>`;
+    }
 
+    const kuponPopup = document.getElementById('kuponPopup');
 
+    function sepetenSil(silinecekAd, urunId) {
+        fetch(`${API_URL}/api/sepet/sil/${aktifKullanici}/${urunId}`, {
+            method: 'DELETE'
+        })
+            .then(() => {
+                let index = sepet.findIndex(urun => urun.ad === silinecekAd);
+                if (index !== -1) {
+                    let silinenUrun = sepet[index];
+                    let gercekSiraNumarasi = urunler.findIndex(u => u.ad === silinecekAd);
+                    let dusulecekToplam = silinenUrun.indirimfiyat != null ? silinenUrun.indirimfiyat : silinenUrun.fiyat;
 
+                    toplam -= dusulecekToplam;
+                    indirimsiz -= silinenUrun.fiyat;
+                    kazanc = indirimsiz - toplam;
 
-
-
-
-
-        function sepetenSil(silinecekAd, urunId) {
-
-            fetch(`http://localhost:3002/api/sepet/sil/${aktifKullanici}/${urunId}`, {
-                method: 'DELETE'
-            })
-                .then(() => {
-                    let index = sepet.findIndex(urun => urun.ad === silinecekAd);
-                    if (index !== -1) {
-                        let silinenUrun = sepet[index];
-                        let eleman = sepet[index].id - 1;
-                        let dusulecekToplam = silinenUrun.indirimfiyat != null ? silinenUrun.indirimfiyat : silinenUrun.fiyat;
-
-                        toplam -= dusulecekToplam;
-                        indirimsiz -= silinenUrun.fiyat;
-                        kazanc = indirimsiz - toplam;
-
-                        if (sepet.length == 0) {
-                            toplam = 0;
-
-                        }
-
-
-                        sepet.splice(index, 1);
-                        sepetGoster();
-                        urunDetay(eleman)
-                    }
-                });
-            fetch('http://localhost:3002/api/populer-urun')
-                .then(res => res.json())
-                .then(popular => {
-                    popUrun = popular || [];
-                    // Detay ekranındaysa detay yıldızları, listedeyse liste yıldızları anlık güncellenir
-                });
-        }
-
-
-
-
-        function onayla() {
-
-            if (sepet.length == 0) {
-                document.getElementById("sepetlist").innerHTML = "Sepetiniz Boş Ödeme Yapılmaz!!"
-            }
-
-            else {
-
-                let sonEklenenUrunID = sepet[sepet.length - 1].id;
-
-                fetch(`http://localhost:3002/api/sepet/temizle/${aktifKullanici}`, { method: 'DELETE' })
-                    .then(() => {
-                        document.getElementById("gelisme").style.opacity = "0.3";
-                        let ekran = document.getElementsByClassName("odemeEkran")[0];
-                        ekran.style.visibility = "visible";
-
-
-
-                        sepet = [];
-                        popUrun = [];
+                    if (sepet.length == 1) {
                         toplam = 0;
-                        indirimsiz = 200;
-                        sepetGoster();
+                    }
 
+                    sepet.splice(index, 1);
+                    sepetGoster();
+                    
+                    if (gercekSiraNumarasi !== -1) {
+                        urunDetay(gercekSiraNumarasi);
+                    }
+                }
+            });
 
+        fetch(`${API_URL}/api/populer-urun`)
+            .then(res => res.json())
+            .then(popular => {
+                popUrun = popular || [];
+            });
+    }
 
-                        start();
+    function onayla() {
+        if (sepet.length == 0) {
+            document.getElementById("sepetlist").innerHTML = "Sepetiniz Boş Ödeme Yapılmaz!!";
+        } else {
+            let sonEklenenUrunID = sepet[sepet.length - 1].id;
 
-                        let gercekSiraNumarasi = urunler.findIndex(urun => urun.id === sonEklenenUrunID);
+            fetch(`${API_URL}/api/sepet/temizle/${aktifKullanici}`, { method: 'DELETE' })
+                .then(() => {
+                    document.getElementById("gelisme").style.opacity = "0.3";
+                    let ekran = document.getElementsByClassName("odemeEkran")[0];
+                    ekran.style.visibility = "visible";
 
+                    sepet = [];
+                    popUrun = [];
+                    toplam = 0;
+                    indirimsiz = 200;
+                    sepetGoster();
+                    start();
 
-                        if (gercekSiraNumarasi !== -1) {
-                            urunDetay(gercekSiraNumarasi);
-                        } else {
-                            urunGoster();
-                        }
+                    let gercekSiraNumarasi = urunler.findIndex(urun => urun.id === sonEklenenUrunID);
 
+                    if (gercekSiraNumarasi !== -1) {
+                        urunDetay(gercekSiraNumarasi);
+                    } else {
+                        urunGoster();
+                    }
 
-
-
-
-
-
-
-
-
-
-                        setTimeout(() => {
-                            ekran.style.visibility = "hidden";
-                            document.getElementById("gelisme").style.opacity = "1";
-                            sepetMenusu.classList.remove('aktif');
-                            sepetArkaplan.classList.remove('aktif');
-                        }, 3000);
-                    });
-            }
-
-
-
-
+                    setTimeout(() => {
+                        ekran.style.visibility = "hidden";
+                        document.getElementById("gelisme").style.opacity = "1";
+                        sepetMenusu.classList.remove('aktif');
+                        sepetArkaplan.classList.remove('aktif');
+                    }, 3000);
+                });
         }
+    }
 
-        function toastGoster(mesaj) {
-            const toastKutusu = document.getElementById('toastKutusu');
-            const toast = document.createElement('div');
-            toast.classList.add('toast-mesaji');
-            toast.innerHTML = `🛒 ${mesaj}`;
+    function toastGoster(mesaj) {
+        const toastKutusu = document.getElementById('toastKutusu');
+        const toast = document.createElement('div');
+        toast.classList.add('toast-mesaji');
+        toast.innerHTML = `🛒 ${mesaj}`;
 
-            toastKutusu.appendChild(toast);
+        toastKutusu.appendChild(toast);
 
-
+        setTimeout(() => {
+            toast.classList.add('kaybol');
             setTimeout(() => {
-                toast.classList.add('kaybol');
+                toast.remove();
+            }, 300);
+        }, 2000);
+    }
 
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            }, 2000);
+    const hesapPopup = document.getElementById('hesapPopup');
+    const hesapArkaplan = document.getElementById('hesapArkaplan');
+
+    function hesap() {
+        let aktifKullanici = localStorage.getItem("aktifKullanici");
+        document.getElementById("guncelAd").value = aktifKullanici || "";
+
+        hesapPopup.classList.add('aktif');
+        hesapArkaplan.classList.add('aktif');
+    }
+
+    function sifreReset() {
+        document.getElementById("giris").style.display = "none";
+        document.getElementById("sifreUnut").style.display = "block";
+        let girisEkranindakiIsim = document.getElementById("isim").value;
+        document.getElementById("guncelAd").value = girisEkranindakiIsim || "";
+    }
+
+    function sifreGuncelle() {
+        let yeniAd = document.getElementById("guncelAd").value;
+        let yeniSifre = document.getElementById("guncelsifre").value;
+
+        if (yeniAd.trim() === "") {
+            alert("Kullanıcı adı boş bırakılamaz!");
+            return;
         }
 
+        fetch(`${API_URL}/api/sifreGuncelle`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ yeniAd: yeniAd, yeniSifre: yeniSifre })
+        })
+            .then(res => res.json())
+            .then(() => {
+                toastGoster("Şifreniz güncellendi!");
+                document.getElementById("giris").style.display = "block";
+                document.getElementById("sifreUnut").style.display = "none";
+            });
+    }
 
-        const hesapPopup = document.getElementById('hesapPopup');
-        const hesapArkaplan = document.getElementById('hesapArkaplan');
+    function hesapKapat() {
+        hesapPopup.classList.remove('aktif');
+        kuponPopup.classList.remove('aktif');
+        hesapArkaplan.classList.remove('aktif');
+    }
 
+    function bilgileriGuncelle() {
+        let eskiAd = localStorage.getItem("aktifKullanici");
+        let yeniAd = document.getElementById("guncelAd").value;
+        let yeniSifre = document.getElementById("guncelsifre").value;
 
-        function hesap() {
-
-            let aktifKullanici = localStorage.getItem("aktifKullanici");
-            document.getElementById("guncelAd").value = aktifKullanici || "";
-
-            hesapPopup.classList.add('aktif');
-            hesapArkaplan.classList.add('aktif');
+        if (yeniAd.trim() === "") {
+            alert("Kullanıcı adı boş bırakılamaz!");
+            return;
         }
 
-        function sifreReset() {
+        fetch(`${API_URL}/api/guncelle`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eskiAd: eskiAd, yeniAd: yeniAd, yeniSifre: yeniSifre })
+        })
+            .then(res => res.json())
+            .then(() => {
+                aktifKullanici = yeniAd;
+                localStorage.setItem("aktifKullanici", yeniAd);
+                toastGoster("Hesap bilgileri güncellendi!");
+                hesapKapat();
+                dbSepetiGetir();
+            });
+    }
 
-            document.getElementById("giris").style.display = "none";
-            document.getElementById("sifreUnut").style.display = "block";
-
-
-
-
-
-            let girisEkranindakiIsim = document.getElementById("isim").value;
-
-
-            document.getElementById("guncelAd").value = girisEkranindakiIsim || "";
-        }
-
-        function sifreGuncelle() {
-            let yeniAd = document.getElementById("guncelAd").value;
-            let yeniSifre = document.getElementById("guncelsifre").value;
-
-            if (yeniAd.trim() === "") {
-                alert("Kullanıcı adı boş bırakılamaz!");
-                return;
-            }
-
-            fetch('http://localhost:3002/api/sifreGuncelle', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ yeniAd: yeniAd, yeniSifre: yeniSifre })
-            })
-                .then(res => res.json())
-                .then(() => {
-                    toastGoster("Şifreniz güncellendi!");
-                    document.getElementById("giris").style.display = "block";
-                    document.getElementById("sifreUnut").style.display = "none";
-
-
-
-                });
-        }
-
-
-        function hesapKapat() {
-            hesapPopup.classList.remove('aktif');
-            kuponPopup.classList.remove('aktif');
-            hesapArkaplan.classList.remove('aktif');
-        }
-
-
-        function bilgileriGuncelle() {
-            let eskiAd = localStorage.getItem("aktifKullanici");
-            let yeniAd = document.getElementById("guncelAd").value;
-            let yeniSifre = document.getElementById("guncelsifre").value;
-
-            if (yeniAd.trim() === "") {
-                alert("Kullanıcı adı boş bırakılamaz!");
-                return;
-            }
-
-            fetch('http://localhost:3002/api/guncelle', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eskiAd: eskiAd, yeniAd: yeniAd, yeniSifre: yeniSifre })
-            })
-                .then(res => res.json())
-                .then(() => {
-                    aktifKullanici = yeniAd;
-                    localStorage.setItem("aktifKullanici", yeniAd);
-                    toastGoster("Hesap bilgileri SQL'de güncellendi!");
-                    hesapKapat();
-                    dbSepetiGetir();
-                });
-        }
-
-
-
-        function cikisYap() {
-            localStorage.removeItem("aktifKullanici");
-            hesapKapat();
-            geri();
-
-
-        }
-
-
-    </script>
+    function cikisYap() {
+        localStorage.removeItem("aktifKullanici");
+        hesapKapat();
+        geri();
+    }
+</script>
 </body>
 
 </html>
