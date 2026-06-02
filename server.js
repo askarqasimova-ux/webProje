@@ -1,102 +1,125 @@
 const express = require("express");
-const sql = require("mssql");
 const cors = require("cors");
+const admin = require("firebase-admin");
+
 const app = express();
 
 app.use(cors());
-app.use(express.json()); // HTML'den gelen JSON verilerini okuyabilmek için ŞART!
+app.use(express.json()); // JSON verilerini okuyabilmek için şart
 
-const sqlBaglanti = {
-  user: "aydin",
-  password: "Goldmaster150.",
-  server: "localhost",
-  database: "projeDB",
-  trustServerCertificate: true,
-};
+// -------------------------------------------------------------
+// FIREBASE BAĞLANTI AYARLARI
+// -------------------------------------------------------------
+// TODO: Firebase Console -> Proje Ayarları -> Hizmet Hesapları (Service Accounts)
+// bölümünden "Yeni Özel Anahtar Oluştur" diyerek indirdiğin JSON dosyasını prorene ekle.
+const hizmetHesabi = require("./serviceAccountKey.json"); 
 
+admin.initializeApp({
+  credential: admin.credential.cert(hizmetHesabi),
+  databaseURL: "https://eticaret-60436-default-rtdb.europe-west1.firebasedatabase.app" // TODO: Kendi Firebase Realtime DB URL'nizi yapıştırın
+});
+
+const db = admin.database();
+
+// -------------------------------------------------------------
 // 1. ÜRÜNLERİ GETİR
+// -------------------------------------------------------------
 app.get("/api/dbUrunler", async (req, res) => {
   try {
-    let havuz = await sql.connect(sqlBaglanti);
-    let sonuc = await havuz
-      .request()
-      .query("SELECT id, image, ad, info, fiyat FROM dbo.urunler");
-    res.json(sonuc.recordset);
+    const ref = db.ref("urunler");
+    const snapshot = await ref.once("value");
+    const veriler = snapshot.val();
+
+    // Firebase objeleri key-value döner, bunu frontend'in beklediği dizi (array) formatına çeviriyoruz
+    const urunListesi = [];
+    if (veriler) {
+      Object.keys(veriler).forEach((key) => {
+        urunListesi.push({ id: key, ...veriler[key] });
+      });
+    }
+    res.json(urunListesi);
   } catch (hata) {
-    console.log("SQL Hatası:", hata);
+    console.error("Firebase Hatası:", hata);
     res.status(500).send("Sunucu hatası");
   }
 });
 
+// -------------------------------------------------------------
 // 2. KULLANICI KAYIT OL
+// -------------------------------------------------------------
 app.post("/api/kayit", async (req, res) => {
   try {
     let { ad, sifre } = req.body;
-    let havuz = await sql.connect(sqlBaglanti);
+    // Kullanıcı adını Firebase path'ine uygun hale getirmek için temizleyebilirsiniz (nokta, dolar işareti vs. barındırmamalı)
+    const temizAd = ad.replace(/[.#$[\]]/g, "_"); 
 
-    // Kullanıcı var mı kontrol et
-    let kontrol = await havuz
-      .request()
-      .input("ad", sql.NVarChar, ad)
-      .query("SELECT * FROM kullanicilar WHERE ad = @ad");
-    if (kontrol.recordset.length > 0)
+    const kullaniciRef = db.ref(`kullanicilar/${temizAd}`);
+    const snapshot = await kullaniciRef.once("value");
+
+    if (snapshot.exists()) {
       return res.status(400).json({ mesaj: "Bu kullanıcı zaten var!" });
+    }
 
-    await havuz
-      .request()
-      .input("ad", sql.NVarChar, ad)
-      .input("sifre", sql.NVarChar, sifre)
-      .query("INSERT INTO kullanicilar (ad, sifre) VALUES (@ad, @sifre)");
+    await kullaniciRef.set({
+      ad: ad,
+      sifre: sifre // Not: Gerçek projelerde şifreleri bcrypt ile şifrelemeniz önerilir
+    });
 
     res.json({ mesaj: "Kayıt başarılı!" });
   } catch (hata) {
-    console.log("Kayıt Hatası:", hata);
+    console.error("Kayıt Hatası:", hata);
     res.status(500).send("Sunucu hatası");
   }
 });
 
+// -------------------------------------------------------------
 // 3. KULLANICI GİRİŞ YAP
+// -------------------------------------------------------------
 app.post("/api/giris", async (req, res) => {
   try {
     let { ad, sifre } = req.body;
-    let havuz = await sql.connect(sqlBaglanti);
-    let sonuc = await havuz
-      .request()
-      .input("ad", sql.NVarChar, ad)
-      .input("sifre", sql.NVarChar, sifre)
-      .query("SELECT * FROM kullanicilar WHERE ad = @ad AND sifre = @sifre");
+    const temizAd = ad.replace(/[.#$[\]]/g, "_");
 
-    if (sonuc.recordset.length > 0) res.json({ basarili: true });
-    else res.json({ basarili: false });
+    const kullaniciRef = db.ref(`kullanicilar/${temizAd}`);
+    const snapshot = await kullaniciRef.once("value");
+
+    if (snapshot.exists() && snapshot.val().sifre === sifre) {
+      res.json({ basarili: true });
+    } else {
+      res.json({ basarili: false });
+    }
   } catch (hata) {
     res.status(500).send("Sunucu hatası");
   }
 });
 
-// 4. BİLGİLERİ GÜNCELLE
+// -------------------------------------------------------------
+// 4. BİLGİLERİ GÜNCELLE (Ad ve Şifre)
+// -------------------------------------------------------------
 app.put("/api/guncelle", async (req, res) => {
   try {
     let { eskiAd, yeniAd, yeniSifre } = req.body;
-    let havuz = await sql.connect(sqlBaglanti);
+    const temizEskiAd = eskiAd.replace(/[.#$[\]]/g, "_");
+    const temizYeniAd = yeniAd.replace(/[.#$[\]]/g, "_");
 
-    // Kullanıcı adını ve şifreyi güncelle
-    await havuz
-      .request()
-      .input("eskiAd", sql.NVarChar, eskiAd)
-      .input("yeniAd", sql.NVarChar, yeniAd)
-      .input("yeniSifre", sql.NVarChar, yeniSifre)
-      .query(
-        "UPDATE kullanicilar SET ad = @yeniAd, sifre = @yeniSifre WHERE ad = @eskiAd",
-      );
+    const eskiKullaniciRef = db.ref(`kullanicilar/${temizEskiAd}`);
+    const yeniKullaniciRef = db.ref(`kullanicilar/${temizYeniAd}`);
+    
+    // 1. Kullanıcı kaydını taşı/güncelle
+    await yeniKullaniciRef.set({ ad: yeniAd, sifre: yeniSifre });
+    if (temizEskiAd !== temizYeniAd) {
+      await eskiKullaniciRef.remove(); // Eski kaydı sil
+    }
 
-    // Kullanıcının sepetindeki adları da yeni adıyla güncelle
-    await havuz
-      .request()
-      .input("eskiAd", sql.NVarChar, eskiAd)
-      .input("yeniAd", sql.NVarChar, yeniAd)
-      .query(
-        "UPDATE sepet SET kullanici_ad = @yeniAd WHERE kullanici_ad = @eskiAd",
-      );
+    // 2. Sepet verilerini yeni kullanıcı adına aktar
+    const eskiSepetRef = db.ref(`sepet/${temizEskiAd}`);
+    const yeniSepetRef = db.ref(`sepet/${temizYeniAd}`);
+    const sepetSnapshot = await eskiSepetRef.once("value");
+
+    if (sepetSnapshot.exists()) {
+      await yeniSepetRef.set(sepetSnapshot.val());
+      await eskiSepetRef.remove();
+    }
 
     res.json({ mesaj: "Güncellendi" });
   } catch (hata) {
@@ -104,103 +127,167 @@ app.put("/api/guncelle", async (req, res) => {
   }
 });
 
-// 5. KULLANICININ SEPETİNİ GETİR
-app.get("/api/sepet/:kullanici", async (req, res) => {
+// Sadece Şifre Güncelle
+app.put("/api/sifreGuncelle", async (req, res) => {
   try {
-    let havuz = await sql.connect(sqlBaglanti);
-    let sonuc = await havuz
-      .request()
-      .input("ad", sql.NVarChar, req.params.kullanici)
-      // Sepet tablosundaki urun_id ile urunler tablosunu birleştirip bilgileri çekiyoruz
-      .query(
-        "SELECT u.id, u.ad, u.fiyat, u.image FROM sepet s JOIN urunler u ON s.urun_id = u.id WHERE s.kullanici_ad = @ad",
-      );
-    res.json(sonuc.recordset);
+    let { yeniAd, yeniSifre } = req.body;
+    const temizAd = yeniAd.replace(/[.#$[\]]/g, "_");
+
+    await db.ref(`kullanicilar/${temizAd}`).update({ sifre: yeniSifre });
+    res.json({ mesaj: "Güncellendi" });
   } catch (hata) {
     res.status(500).send("Sunucu hatası");
   }
 });
 
+// -------------------------------------------------------------
+// 5. KULLANICININ SEPETİNİ GETİR
+// -------------------------------------------------------------
+app.get("/api/sepet/:kullanici", async (req, res) => {
+  try {
+    const temizAd = req.params.kullanici.replace(/[.#$[\]]/g, "_");
+    const sepetSnapshot = await db.ref(`sepet/${temizAd}`).once("value");
+    const sepetVerisi = sepetSnapshot.val();
+
+    if (!sepetVerisi) {
+      return res.json([]);
+    }
+
+    // SQL'deki JOIN mantığını simüle etmek için ürün detaylarını da çekiyoruz
+    const urunlerSnapshot = await db.ref("urunler").once("value");
+    const tumUrunler = urunlerSnapshot.val() || {};
+
+    const sepetListesi = [];
+    Object.keys(sepetVerisi).forEach((key) => {
+      const sepetItem = sepetVerisi[key];
+      const urunDetay = tumUrunler[sepetItem.urunId];
+
+      if (urunDetay) {
+        sepetListesi.push({
+          sepetItemId: key, // Firebase'in otomatik verdiği benzersiz push key'i
+          id: sepetItem.urunId,
+          ad: urunDetay.ad,
+          fiyat: urunDetay.fiyat,
+          image: urunDetay.image,
+          indirimfiyat: urunDetay.indirimfiyat,
+          kupon: sepetItem.kupon || null
+        });
+      }
+    });
+
+    res.json(sepetListesi);
+  } catch (hata) {
+    console.error(hata);
+    res.status(500).send("Sunucu hatası");
+  }
+});
+
+// -------------------------------------------------------------
 // 6. SEPETE ÜRÜN EKLE
+// -------------------------------------------------------------
 app.post("/api/sepet/ekle", async (req, res) => {
   try {
     let { kullanici, urunId } = req.body;
-    let havuz = await sql.connect(sqlBaglanti);
-    await havuz
-      .request()
-      .input("ad", sql.NVarChar, kullanici)
-      .input("urunId", sql.Int, urunId)
-      .query("INSERT INTO sepet (kullanici_ad, urun_id) VALUES (@ad, @urunId)");
+    const temizAd = kullanici.replace(/[.#$[\]]/g, "_");
+
+    // Her eklemede benzersiz bir key oluşturması için push() kullanıyoruz (Aynı üründen birden fazla eklenebilsin diye)
+    await db.ref(`sepet/${temizAd}`).push({
+      urunId: urunId,
+      eklenmeTarihi: Date.now()
+    });
+
     res.json({ mesaj: "Eklendi" });
   } catch (hata) {
     res.status(500).send("Sunucu hatası");
   }
 });
 
-// 7. SEPETTEN ÜRÜN SİL
+// -------------------------------------------------------------
+// 7. SEPETTEN SADECE 1 ADET ÜRÜN SİL (TOP 1 mantığı)
+// -------------------------------------------------------------
 app.delete("/api/sepet/sil/:kullanici/:urunId", async (req, res) => {
   try {
-    let havuz = await sql.connect(sqlBaglanti);
-    // İlgili üründen sadece 1 tanesini siler (TOP 1)
-    await havuz
-      .request()
-      .input("ad", sql.NVarChar, req.params.kullanici)
-      .input("urunId", sql.Int, req.params.urunId)
-      .query(
-        "DELETE TOP(1) FROM sepet WHERE kullanici_ad = @ad AND urun_id = @urunId",
-      );
-    res.json({ mesaj: "Silindi" });
+    const temizAd = req.params.kullanici.replace(/[.#$[\]]/g, "_");
+    const urunId = req.params.urunId;
+
+    const sepetRef = db.ref(`sepet/${temizAd}`);
+    // Eşleşen ürünü bulmak için sorguluyoruz
+    const snapshot = await sepetRef.orderByChild("urunId").equalTo(parseInt(urunId) || urunId).once("value");
+    
+    if (snapshot.exists()) {
+      // Sadece ilk eşleşen kaydın key'ini alıp siliyoruz (TOP 1 mantığı)
+      const ilkUrunKey = Object.keys(snapshot.val())[0];
+      await db.ref(`sepet/${temizAd}/${ilkUrunKey}`).remove();
+      res.json({ mesaj: "Silindi" });
+    } else {
+      res.status(404).json({ mesaj: "Ürün sepetinizde bulunamadı" });
+    }
   } catch (hata) {
     res.status(500).send("Sunucu hatası");
   }
 });
 
+// -------------------------------------------------------------
 // 8. ONAYLA (SEPETİ TEMİZLE)
+// -------------------------------------------------------------
 app.delete("/api/sepet/temizle/:kullanici", async (req, res) => {
   try {
-    let havuz = await sql.connect(sqlBaglanti);
-    await havuz
-      .request()
-      .input("ad", sql.NVarChar, req.params.kullanici)
-      .query("DELETE FROM sepet WHERE kullanici_ad = @ad");
+    const temizAd = req.params.kullanici.replace(/[.#$[\]]/g, "_");
+    await db.ref(`sepet/${temizAd}`).remove();
     res.json({ mesaj: "Sepet temizlendi" });
   } catch (hata) {
     res.status(500).send("Sunucu hatası");
   }
 });
 
+// -------------------------------------------------------------
+// 9. POPÜLER ÜRÜNLER (En Çok Sepete Eklenen İlk 2 Ürün)
+// -------------------------------------------------------------
 app.get("/api/populer-urun", async (req, res) => {
   try {
-    let havuz = await sql.connect(sqlBaglanti);
+    const sepetSnapshot = await db.ref("sepet").once("value");
+    const sepetler = sepetSnapshot.val() || {};
 
-    // SQL'in kalbi burası: Sepetteki urun_id'leri gruplayıp sayıyoruz
-    let sorgu = `
-            SELECT TOP 2
-                u.id, 
-                u.ad, 
-                u.fiyat, 
-                u.image, 
-                COUNT(s.urun_id) AS eklenmeSayisi 
-            FROM sepet s
-            JOIN urunler u ON s.urun_id = u.id
-            GROUP BY u.id, u.ad, u.fiyat, u.image
-            ORDER BY eklenmeSayisi DESC
-        `;
+    // NoSQL'de sayım işlemini manuel gruplayarak yapıyoruz
+    const sayac = {};
+    Object.keys(sepetler).forEach((kullaniciKey) => {
+      const kullaniciSepeti = sepetler[kullaniciKey];
+      Object.keys(kullaniciSepeti).forEach((itemKey) => {
+        const urunId = kullaniciSepeti[itemKey].urunId;
+        sayac[urunId] = (sayac[urunId] || 0) + 1;
+      });
+    });
 
-    let sonuc = await havuz.request().query(sorgu);
+    // En çok eklenene göre sıralama yapıyoruz
+    const siraliUrunler = Object.keys(sayac)
+      .map(id => ({ id, eklenmeSayisi: sayac[id] }))
+      .sort((a, b) => b.eklenmeSayisi - a.eklenmeSayisi)
+      .slice(0, 2); // TOP 2
 
-    // Eğer sepet tablosu boşsa null gönder, değilse en çok eklenen ilk ürünü gönder
-    if (sonuc.recordset.length > 0) {
-      res.json(sonuc.recordset);
-    } else {
-      res.json(null);
+    if (siraliUrunler.length === 0) {
+      return res.json(null);
     }
+
+    // Ürünlerin detaylarını ana tablodan çekiyoruz
+    const urunlerSnapshot = await db.ref("urunler").once("value");
+    const tumUrunler = urunlerSnapshot.val() || {};
+
+    const sonuc = siraliUrunler.map(item => ({
+      id: item.id,
+      eklenmeSayisi: item.eklenmeSayisi,
+      ...(tumUrunler[item.id] || {})
+    }));
+
+    res.json(sonuc);
   } catch (hata) {
-    console.log("SQL Hatası:", hata);
+    console.error("SQL/Firebase Hatası:", hata);
     res.status(500).send("Sunucu hatası");
   }
 });
 
+// -------------------------------------------------------------
+// SERVER BAŞLATMA
+// -------------------------------------------------------------
 app.listen(3002, () => {
-  console.log("Sunucu çalışıyor...");
+  console.log("Firebase destekli sunucu 3002 portunda çalışıyor...");
 });
