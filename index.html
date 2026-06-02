@@ -1513,19 +1513,32 @@
 
     function start() {
         fetch(`${API_URL}/api/dbUrunler`)
-            .then(cevap => cevap.json())
+            .then(cevap => {
+                if (!cevap.ok) {
+                    throw new Error(`Ürünler getirilemedi, Durum: ${cevap.status}`);
+                }
+                return cevap.json();
+            })
             .then(dbUrunler => {
                 urunler = dbUrunler;
                 return fetch(`${API_URL}/api/populer-urun`);
             })
-            .then(cevap => cevap.json())
+            .then(cevap => {
+                if (!cevap.ok) {
+                    throw new Error(`Popüler ürünler getirilemedi, Durum: ${cevap.status}`);
+                }
+                return cevap.json();
+            })
             .then(popular => {
                 popUrun = popular || [];
                 urunGoster('tumu');
             })
-            .catch(hata => console.error('Veri çekme hatası:', hata));
+            .catch(hata => {
+                console.warn('Backend bağlantı detayı:', hata.message);
+                // Sunucu uyanmaya çalışıyor olabilir (Render ücretsiz servis uyku modu kontrolü)
+                toastGoster("Veriler yüklenirken sunucu uyanıyor olabilir, lütfen bekleyin...");
+            });
     }
-
     window.onload = function () {
         if (aktifKullanici) {
             document.getElementById("giris").style.display = "none";
