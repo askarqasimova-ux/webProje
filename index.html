@@ -251,8 +251,11 @@
             align-items: center;
             justify-content: center;
             margin: 10px;
-            margin-bottom: 0%;
+            
+
+           
         }
+
 
 
 
@@ -882,6 +885,12 @@
 
         }
 
+        #urunDetay{
+                width: 100%;
+                height: 100vh;
+                margin-top: -60px;
+            }
+
         .indirimYuzde {
             background-color: red;
             padding: 3px;
@@ -1419,8 +1428,9 @@
             }
 
             .sepetEkle {
+                display: none;
                 transform: translateY(0) !important;
-                height: 20% !important;
+                height: 0% !important;
                 font-size: 9px !important;
                 letter-spacing: 1px !important;
                 padding: 5px !important;
@@ -1483,6 +1493,24 @@
             .urunItemDetay .urunAd{
                 zoom: 150%;
             }
+
+            .odemeEkran {
+            position: fixed;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            z-index: 10000000;
+            text-align: center;
+            font-size: 44px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            color: #4CAF50;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            
+            visibility: hidden;
+
+        }
             
         }
     </style>
@@ -1526,7 +1554,7 @@
         <div id="aramaDropdown"></div>
     </div>
 
-    <div class="odemeEkran">Ödeme başarıyla Gerçekleşti</div>
+    <div class="odemeEkran">Ödeme başarıyla <br>Gerçekleşti</div>
 
     <div id="giris">
 
@@ -1979,6 +2007,7 @@
 
         function urunAra(kelime) {
             let detay = document.getElementById("urunDetay");
+
             if (detay.style.display == "flex") {
                 urunAraDropdown(kelime);
             } else {
@@ -1989,6 +2018,9 @@
 
                 for (let i = 0; i < urunler.length; i++) {
                     let u = urunler[i];
+                    if(u.ad == "kupon"){
+                        continue;
+                    }
                     if (u.ad.toLowerCase().includes(arama) || (u.info && u.info.toLowerCase().includes(arama))) {
                         let adet = sepet.filter(x => x.ad == u.ad).length;
 
@@ -2027,6 +2059,7 @@
         function urunAraDropdown(kelime) {
             let aranan = kelime.toLowerCase().trim();
             let dropdown = document.getElementById("aramaDropdown");
+            
 
             if (aranan === "") {
                 dropdown.innerHTML = "";
@@ -2039,6 +2072,10 @@
 
             for (let i = 0; i < urunler.length; i++) {
                 let u = urunler[i];
+
+                 if(u.ad == "kupon"){
+                        continue;
+                    }
                 if (u.ad.toLowerCase().includes(aranan)) {
                     eslesmeVarMi = true;
                     dropdown.innerHTML += `
@@ -2130,7 +2167,7 @@
                 </div>
                 <div class="urunItemDetay">
                     <div class="urunImg">
-                        <img class="foto" src="${u.image}" style="width:auto; height:auto">
+                        <img class="foto" src="${u.image}" style="width:auto; height:500px">
                     </div>
                     <div class="urunInfo">
                         <table width="100%">
