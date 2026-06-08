@@ -1520,7 +1520,7 @@
 <body>
 
     <nav id="navbar">
-        <h1 style="float: left; height: 25px; margin-top: 0%;font-size:30px;">Manzum Ticaret</h1>
+        <h1 style="float: left; height: 25px; margin-top: 0%;">Manzum Ticaret</h1>
 
 
 
@@ -1541,15 +1541,22 @@
     <nav id="navigator">
 
         <button class="navbuton" onclick="urunGoster('tumu')"><span onclick="renkDegistir(this)">Tümü</span></button>
-        <button class="navbuton" onclick="urunGoster('yiyecek')"><span
-                onclick="renkDegistir(this)">Yiyecek</span></button>
-        <button class="navbuton" onclick="urunGoster('içecek')"><span
-                onclick="renkDegistir(this)">İçecek</span></button>
+        <button class="navbuton" onclick="urunGoster('elektronik')"><span
+                onclick="renkDegistir(this)">Elektronik</span></button>
+        <button class="navbuton" onclick="urunGoster('giyim')"><span
+                onclick="renkDegistir(this)">Giyim</span></button>
+                 <button class="navbuton" onclick="urunGoster('spor')"><span
+                onclick="renkDegistir(this)">Spor</span></button>
+                 <button class="navbuton" onclick="urunGoster('saat')"><span
+                onclick="renkDegistir(this)">Saat</span></button>
         <div id="aramaDropdown"></div>
 
     </nav>
 
-    
+    <div class="search-box-container">
+        <input type="text" id="ara" oninput="urunAra(this.value)" placeholder="Ürün ara...">
+        <div id="aramaDropdown"></div>
+    </div>
 
     <div class="odemeEkran">Ödeme başarıyla <br>Gerçekleşti</div>
 
@@ -1692,12 +1699,6 @@
 
 
     <div id="gelisme">
-
-
-        <div class="search-box-container">
-        <input type="text" id="ara" oninput="urunAra(this.value)" placeholder="Ürün ara...">
-        <div id="aramaDropdown"></div>
-    </div>
 
 
 
