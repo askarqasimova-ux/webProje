@@ -17,6 +17,7 @@
             overflow-x: hidden;
             margin: 0px;
             padding: 0px;
+            overflow-y: scroll;
         }
 
         body {
@@ -251,9 +252,9 @@
             align-items: center;
             justify-content: center;
             margin: 10px;
-            
 
-           
+
+
         }
 
 
@@ -885,11 +886,11 @@
 
         }
 
-        #urunDetay{
-                width: 100%;
-                height: 100vh;
-                margin-top: -60px;
-            }
+        #urunDetay {
+            width: 100%;
+            height: 100vh;
+            margin-top: -60px;
+        }
 
         .indirimYuzde {
             background-color: red;
@@ -1056,7 +1057,10 @@
             display: flex;
             top: 55px;
             width: 100%;
+            overflow-x: visible;
+            box-sizing: border-box;
             z-index: 1000;
+            
 
         }
 
@@ -1066,29 +1070,24 @@
 
         }
 
-        #navigator span {
-            padding: 2px 8px;
-            border-radius: 5px;
-
-        }
 
 
 
         .navbuton {
-            width: 50%;
+            width: 100%;
 
             height: 25px;
             background-color: gold;
-            border: 3px solid black;
+           
 
             cursor: pointer;
             font-family: Arial, Helvetica, sans-serif;
             font-weight: bolder;
-            font-size: 14px;
+            font-size: 15px;
 
         }
 
-        .navbuton:hover {
+        .navbuton :hover {
             background-color: #ddd;
 
         }
@@ -1267,13 +1266,14 @@
 
         }
 
-        /* ==========================================================================
-   TELEFON VE MOBİL CİHAZ UYUMLULUK KODLARI (MAX-WIDTH: 768px)
-   ========================================================================== */
+        /*TELEFON VE MOBİL CİHAZ UYUMLULUK KODLARI */
         @media screen and (max-width: 762px) {
+
+
 
             * {
                 box-sizing: border-box !important;
+                
             }
 
             #giris,
@@ -1351,6 +1351,7 @@
             }
 
 
+
             #sepetAlt {
                 width: 100% !important;
                 box-sizing: border-box !important;
@@ -1407,6 +1408,7 @@
             #urunlist {
                 justify-content: center !important;
                 padding: 0 5px !important;
+                
             }
 
             .urunItem {
@@ -1416,7 +1418,7 @@
             }
 
             .foto {
-             height: 18vh !important;
+                height: 18vh !important;
             }
 
             .urunAd {
@@ -1480,7 +1482,8 @@
                 height: 60px !important;
                 font-size: 15px !important;
             }
-            #urunDetay{
+
+            #urunDetay {
                 width: 100%;
                 height: 100vh;
                 margin-top: -60px;
@@ -1490,28 +1493,28 @@
                 zoom: 180%;
             }
 
-            .urunItemDetay .urunAd{
+            .urunItemDetay .urunAd {
                 zoom: 150%;
             }
 
             .odemeEkran {
-            position: fixed;
-            display: flex;
-            width: 100%;
-            height: 100%;
-            z-index: 10000000;
-            text-align: center;
-            font-size: 44px;
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            color: #4CAF50;
-            align-items: center;
-            justify-content: center;
-            vertical-align: middle;
-            
-            visibility: hidden;
+                position: fixed;
+                display: flex;
+                width: 100%;
+                height: 100%;
+                z-index: 10000000;
+                text-align: center;
+                font-size: 44px;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                color: #4CAF50;
+                align-items: center;
+                justify-content: center;
+                vertical-align: middle;
 
-        }
-            
+                visibility: hidden;
+
+            }
+
         }
     </style>
 
@@ -1540,18 +1543,16 @@
 
     <nav id="navigator">
 
-        <button class="navbuton" onclick="urunGoster('tumu')"><span onclick="renkDegistir(this)">Tümü</span></button>
-        <button class="navbuton" onclick="urunGoster('elektronik')"><span
-                onclick="renkDegistir(this)">Elektronik</span></button>
-        <button class="navbuton" onclick="urunGoster('giyim')"><span
-                onclick="renkDegistir(this)">Giyim</span></button>
-                 <button class="navbuton" onclick="urunGoster('spor')"><span
-                onclick="renkDegistir(this)">Spor</span></button>
-                 <button class="navbuton" onclick="urunGoster('saat')"><span
-                onclick="renkDegistir(this)">Saat</span></button>
-        <div id="aramaDropdown"></div>
+        <button class="navbuton" onclick="urunGoster('tumu'); renkDegistir(this)">Tümü</button>
+        <button class="navbuton" onclick="urunGoster('elektronik'); renkDegistir(this)">Elektronik</button>
+        <button class="navbuton" onclick="urunGoster('giyim'); renkDegistir(this)">Giyim</button>
+        <button class="navbuton" onclick="urunGoster('spor'); renkDegistir(this)">Spor</button>
+        <button class="navbuton" onclick="urunGoster('saat'); renkDegistir(this)">Saat</button>
+
 
     </nav>
+
+    <div id="aramaDropdown"></div>
 
     <div class="search-box-container">
         <input type="text" id="ara" oninput="urunAra(this.value)" placeholder="Ürün ara...">
@@ -1919,7 +1920,7 @@
         }
 
         function renkDegistir(veri) {
-            let tumSpanlar = document.querySelectorAll("#navigator .navbuton span");
+            let tumSpanlar = document.querySelectorAll("#navigator .navbuton");
             tumSpanlar.forEach(span => {
                 span.style.backgroundColor = "white";
                 span.style.color = "black";
@@ -1927,7 +1928,7 @@
 
             veri.style.backgroundColor = "#ffc400";
             veri.style.color = "black";
-            veri.style.padding = "2px 30px";
+            veri.style.padding = "-2px";
             veri.style.borderRadius = "5px";
         }
 
@@ -2022,7 +2023,7 @@
 
                 for (let i = 0; i < urunler.length; i++) {
                     let u = urunler[i];
-                    if(u.ad == "kupon"){
+                    if (u.ad == "kupon") {
                         continue;
                     }
                     if (u.ad.toLowerCase().includes(arama) || (u.info && u.info.toLowerCase().includes(arama))) {
@@ -2063,7 +2064,7 @@
         function urunAraDropdown(kelime) {
             let aranan = kelime.toLowerCase().trim();
             let dropdown = document.getElementById("aramaDropdown");
-            
+
 
             if (aranan === "") {
                 dropdown.innerHTML = "";
@@ -2077,9 +2078,9 @@
             for (let i = 0; i < urunler.length; i++) {
                 let u = urunler[i];
 
-                 if(u.ad == "kupon"){
-                        continue;
-                    }
+                if (u.ad == "kupon") {
+                    continue;
+                }
                 if (u.ad.toLowerCase().includes(aranan)) {
                     eslesmeVarMi = true;
                     dropdown.innerHTML += `
@@ -2116,21 +2117,21 @@
 
             let u = urunler[i];
 
-           
+
             fetch(`${API_URL}/api/sepet/ekle`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ kullanici: aktifKullanici, urunId: u.id })
             })
                 .then(() => {
-                    
-                    if(urunler[i].ad == "kupon"){
-                        for(let j= 0; j< sepet.length; j++){
-                            if(sepet[j].ad == "kupon"){
+
+                    if (urunler[i].ad == "kupon") {
+                        for (let j = 0; j < sepet.length; j++) {
+                            if (sepet[j].ad == "kupon") {
                                 alert("Zaten kupon kullandınız!");
                                 return;
                             }
-                            
+
                         }
                     }
                     sepet.push(u);
@@ -2217,22 +2218,22 @@
                     sepet = gelenSepet;
                     indirimsiz = 0;
                     toplam = 0;
-                    
+
                     sepet.forEach(u => indirimsiz += u.fiyat);
                     sepet.forEach(u => toplam += u.indirimfiyat != null ? u.indirimfiyat : u.fiyat);
 
 
-                   for(let i = 0; i< sepet.length; i++){
-                    if(sepet[i].ad == "kupon"){
-                       uygulananKupon = "HOSGELDIN200";
-                       indirimsiz += 200;
+                    for (let i = 0; i < sepet.length; i++) {
+                        if (sepet[i].ad == "kupon") {
+                            uygulananKupon = "HOSGELDIN200";
+                            indirimsiz += 200;
+                        }
                     }
-                   }
 
-                    
 
-                  
-                    
+
+
+
                     kazanc = indirimsiz - toplam;
                     kargoluToplam = toplam < 300 ? toplam + 200 : toplam;
 
@@ -2252,11 +2253,11 @@
                 for (let i = 0; i < sepet.length; i++) {
                     let u = sepet[i];
 
-                    if(u.ad =="kupon"){
+                    if (u.ad == "kupon") {
                         continue;
                     }
 
-                   
+
                     if (gruplar[u.ad]) {
                         gruplar[u.ad].adet++;
                     } else {
@@ -2315,7 +2316,7 @@
 
         }
 
-      
+
         const kuponPopup = document.getElementById('kuponPopup');
 
         function sepetenSil(silinecekAd, urunId) {
@@ -2324,7 +2325,7 @@
             })
                 .then(res => res.json())
                 .then(data => {
-                    // Backend gerçekten sildiyse yerelde de sepeti güncelle
+                    
                     let index = sepet.findIndex(urun => urun.ad === silinecekAd);
                     if (index !== -1) {
                         let silinenUrun = sepet[index];
@@ -2335,16 +2336,16 @@
                         indirimsiz -= silinenUrun.fiyat;
                         kazanc = indirimsiz - toplam;
 
-                        sepet.splice(index, 1); // Diziden çıkart
+                        sepet.splice(index, 1); 
 
                         if (sepet.length === 0) {
                             toplam = 0;
                             indirimsiz = 200;
                             kazanc = 0;
                         }
-                        
+
                         sepetGoster();
-                       
+
 
                         if (gercekSiraNumarasi !== -1) {
                             urunDetay(gercekSiraNumarasi);
