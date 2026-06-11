@@ -1527,7 +1527,7 @@
 <body>
 
     <nav id="navbar">
-        <h1 style="float: left; height: 25px; margin-top: 2%;">Manzum Ticaret</h1>
+        <h1 style="float: left; height: 25px; margin-top: 2%; cursor: pointer;" onclick="window.onload()">Manzum Ticaret</h1>
 
 
 
@@ -1547,7 +1547,7 @@
 
     <nav id="navigator">
 
-        <button class="navbuton" onclick="urunGoster('tumu'); renkDegistir(this)">Tümü</button>
+        <button id="tumu" class="navbuton" onclick="urunGoster('tumu'); renkDegistir(this)">Tümü</button>
         <button class="navbuton" onclick="urunGoster('elektronik'); renkDegistir(this)">Elektronik</button>
         <button class="navbuton" onclick="urunGoster('giyim'); renkDegistir(this)">Giyim</button>
         <button class="navbuton" onclick="urunGoster('spor'); renkDegistir(this)">Spor</button>
@@ -1835,6 +1835,7 @@
                 document.getElementById("navbar").style.display = "flex";
                 document.getElementById("navigator").style.display = "flex";
                 dbSepetiGetir();
+                renkDegistir(document.getElementById("tumu"))
             } else {
                 document.getElementById("navbar").style.display = "none";
                 document.getElementById("navigator").style.display = "none";
