@@ -748,6 +748,7 @@
             vertical-align: middle;
             align-items: center;
             justify-content: space-evenly;
+           
         }
 
         td {
@@ -791,6 +792,7 @@
 
 
             border-radius: 100%;
+            display: none;
         }
 
         .detayPopular {
@@ -1078,6 +1080,7 @@
 
             height: 25px;
             background-color: gold;
+            color: black;
            
 
             cursor: pointer;
@@ -1475,6 +1478,7 @@
                 width: 40px !important;
                 height: 40px !important;
                 font-size: 11px !important;
+                display: none;
             }
 
             .detayPopular {
@@ -1523,7 +1527,7 @@
 <body>
 
     <nav id="navbar">
-        <h1 style="float: left; height: 25px; margin-top: 0%;">Manzum Ticaret</h1>
+        <h1 style="float: left; height: 25px; margin-top: 2%;">Manzum Ticaret</h1>
 
 
 
@@ -1709,17 +1713,6 @@
             <h1 id="text">ÜRÜNLER</h1>
             <p id="urunlist"></p>
         </div>
-
-        <div>
-            <h1 id="text"></h1>
-            <p id="urunlist"></p>
-        </div>
-
-        <div>
-            <h1 id="text"></h1>
-            <p id="urunlist"></p>
-        </div>
-
 
 
         <div id="sepetMenusu" class="sepet-alani">
@@ -1965,11 +1958,15 @@
         }
 
         function urunGoster(deger) {
+            
             window.scrollTo({ top: 0, behavior: "smooth" });
 
             document.getElementById("urunlist").style.display = "flex";
             document.getElementById("text").style.display = "flex";
             document.getElementById("urunDetay").style.display = "none";
+            
+            
+           
 
             let alan = document.getElementById("urunlist");
             alan.innerHTML = "";
@@ -1983,10 +1980,10 @@
                 }
 
                 alan.innerHTML += `
-            <div class="disKapsam">
+            <div class="disKapsam"style="display: ${u.kategori == deger || (deger == 'tumu') ? 'flex' : 'none'}">
                 <div class="popular" style="display: ${popUrun.some(p => p.ad === u.ad) ? 'flex' : 'none'}">⭐⭐⭐<br>Popüler<br>Ürün</div>
                 <div class="adet_sayisi" style=" display: ${adet > 0 ? 'flex' : 'none'}">${adet}</div>
-                <div class="urunItem" style="display: ${u.kategori == deger || (deger == 'tumu') ? 'flex' : 'none'}">
+                <div class="urunItem">
                     <div class="urunImg" onclick="urunDetay(${i})">
                         <img class="foto" src="${u.image}" style="width:auto; height:17vh">
                     </div>
@@ -2325,7 +2322,7 @@
             })
                 .then(res => res.json())
                 .then(data => {
-                    
+                   
                     let index = sepet.findIndex(urun => urun.ad === silinecekAd);
                     if (index !== -1) {
                         let silinenUrun = sepet[index];
