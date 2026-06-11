@@ -2072,6 +2072,7 @@
             let alan = document.getElementById("urunlist");
             let indirimAlan = document.getElementById("indirimAlan");
             let indirimAlani = document.getElementById("indirimAlani");
+            indirimAlani.style.display = "none";
             alan.innerHTML = "";
             indirimAlan.innerHTML = "";
 
@@ -2088,6 +2089,9 @@
                 if(deger == "tumu" && u.indirimfiyat ){
                 
                     indirimAlan.style.display = "flex";
+                    indirimAlani.style.display = "block";
+                    
+                    
                     indirimAlan.innerHTML +=`
                     <div class="indirimKapsam"style="display: ${u.indirimfiyat ? 'flex' : 'none'}">
               
